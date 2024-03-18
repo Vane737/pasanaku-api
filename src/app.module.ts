@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JugadoresModule } from './jugadores/jugadores.module';
+import { BancoModule } from './banco/banco.module';
 
 
 console.log(process.env.DB_HOST)
@@ -11,20 +13,6 @@ console.log(process.env.DB_USERNAME)
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // TypeOrmModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     type: 'postgres',
-    //     host: configService.get<string>('DB_HOST'),
-    //     port: configService.get<number>('DB_PORT'),
-    //     database: configService.get<string>('DB_NAME'),
-    //     username: configService.get<string>('DB_USERNAME'),
-    //     password: configService.get<string>('DB_PASSWORD'),
-    //     autoLoadEntities: true,
-    //     synchronize: true,
-    //   }),
-    //   inject: [ConfigService],
-    // }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -35,6 +23,8 @@ console.log(process.env.DB_USERNAME)
       autoLoadEntities: true, // Carga automaticamente las entidades
       synchronize: true,  // Realiza las migraciones automaticamente
     }),
+    JugadoresModule,
+    BancoModule,
   ]
 })
 export class AppModule {}
