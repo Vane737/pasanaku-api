@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JugadoresModule } from './jugadores/jugadores.module';
 import { BancoModule } from './banco/banco.module';
+import { CuentaModule } from './cuenta/cuenta.module';
 
 
 console.log(process.env.DB_HOST)
@@ -25,6 +26,7 @@ console.log(process.env.DB_USERNAME)
     }),
     JugadoresModule,
     BancoModule,
+    CuentaModule,
   ]
 })
 export class AppModule {}
