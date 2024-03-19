@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Cuenta } from "src/cuenta/entities/cuenta.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -23,4 +24,10 @@ export class Jugador {
     
     @Column('text')
     direccion: string
+
+    @OneToMany( 
+        () => Cuenta,
+        (cuenta) => cuenta.jugador, 
+        { cascade: true, eager: true } )
+    cuentas : Cuenta[];
 }

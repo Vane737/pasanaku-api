@@ -5,22 +5,33 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Jugador } from './entities/jugador.entity';
+import { CuentaService } from 'src/cuenta/cuenta.service';
+import { Cuenta } from 'src/cuenta/entities/cuenta.entity';
 
 @Injectable()
 export class JugadoresService {
 
   private readonly logger = new Logger('JugadoresService')
 
-  constructor( @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>, ) { }
-
+  constructor( 
+    @InjectRepository( Jugador ) 
+    private readonly jugadorRepository: Repository<Jugador>, 
+    
+    @InjectRepository( Cuenta ) 
+    private readonly cuentaRepository: Repository<Cuenta>, 
+    ) { }
 
   async create(createJugadorDto: CreateJugadorDto) {
 
     try {
-      const jugador = this.jugadorRepository.create( createJugadorDto );
+      const { cuentas = [], ...jugadorDetails } = createJugadorDto;
+      const jugador = this.jugadorRepository.create({ 
+        ...jugadorDetails, 
+        cuentas: cuentas.map( cuenta => this.cuentaRepository.create({ nro: cuenta.nro, departamento: cuenta.departamento }) ) 
+      });
       await this.jugadorRepository.save( jugador );
-
-      return jugador;
+ 
+      return { ...jugador, cuentas };
 
     } catch (error) {      
       console.log(error);
@@ -30,11 +41,16 @@ export class JugadoresService {
 
 
   findAll() {
-    return this.jugadorRepository.find({});
+    return this.jugadorRepository.find({
+      relations: {
+        cuentas: true,
+      }
+    });
+
   }
 
 
-  async findOne(id: string) {
+  async findOne( id: string ) {
     const jugador = await this.jugadorRepository.findOneBy({ id });
     if ( !jugador ) {
       throw new NotFoundException(`El jugador con el id ${ id } no fue encontrado.`)
@@ -43,47 +59,65 @@ export class JugadoresService {
   }
 
 
-  async update(id: string, updateJugadorDto: UpdateJugadorDto): Promise<Jugador> {
+  async update( id: string, updateJugadorDto: UpdateJugadorDto ): Promise<Jugador> {
     // Busca al jugador existente por su ID
-    const jugador = await this.jugadorRepository.findOneBy({ id });
+    const { cuentas, ...jugadorDto } = await this.jugadorRepository.findOneBy({ id });
 
-    console.log(jugador);
+    console.log(jugadorDto);
     
-    if (!jugador) {
+    if (!jugadorDto) {
       throw new NotFoundException(`Jugador con el id ${id} no encontrado`);
     }
 
     // Actualiza las propiedades del jugador según el DTO
-    if (updateJugadorDto.nombre) {
-      jugador.nombre = updateJugadorDto.nombre;
+    if ( updateJugadorDto.nombre ) {
+      jugadorDto.nombre = updateJugadorDto.nombre;
     }
-    if (updateJugadorDto.telefono) {
-      jugador.telefono = updateJugadorDto.telefono;
+    if ( updateJugadorDto.telefono ) {
+      jugadorDto.telefono =  updateJugadorDto.telefono;
     }
-    if (updateJugadorDto.email) {
-      jugador.email = updateJugadorDto.email;
+    if ( updateJugadorDto.email ) {
+      jugadorDto.email =  updateJugadorDto.email;
     }
-    if (updateJugadorDto.ci) {
-      jugador.ci = updateJugadorDto.ci;
+    if ( updateJugadorDto.ci ) {
+      jugadorDto.ci =  updateJugadorDto.ci;
     }
-    if (updateJugadorDto.email) {
-      jugador.email = updateJugadorDto.email;
+    if ( updateJugadorDto.email ) {
+      jugadorDto.email =  updateJugadorDto.email;
     }
-    if (updateJugadorDto.direccion) {
-      jugador.direccion = updateJugadorDto.direccion;
+    if ( updateJugadorDto.direccion ) {
+      jugadorDto.direccion =  updateJugadorDto.direccion;
     }
+    // if ( updateJugadorDto.cuentas ) {
+    //   jugadorDto.direccion = updateJugadorDto.direccion;
+    // }
+    // jugadorDto.cuentas = [];
 
-    // Guarda el jugador actualizado
-    await this.jugadorRepository.save(jugador);
+    // Guarda el jugadorDto actualizado
+    await console.log(jugadorDto)
+    await this.jugadorRepository.save({ cuentas, ...jugadorDto });
 
-    return jugador;
+    return await this.jugadorRepository.findOneBy({ id });
   }
 
   async remove(id: string) {
     const jugador = await this.findOne(id);
-    // if( !jugador )
 
     await this.jugadorRepository.remove( jugador );
+  }
+
+  async deleteAllJugadores() {
+    const query = this.jugadorRepository.createQueryBuilder('jugador');
+
+    try {
+      return await query
+      .delete()
+      .where({})
+      .execute();
+    } catch ( error ) {
+      this.handleExceptions(error)
+      
+    }
   }
 
   private handleExceptions( error: any) {
