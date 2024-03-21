@@ -88,9 +88,13 @@ export class JugadoresService {
     if ( updateJugadorDto.direccion ) {
       jugadorDto.direccion =  updateJugadorDto.direccion;
     }
-    // if ( updateJugadorDto.cuentas ) {
-    //   jugadorDto.direccion = updateJugadorDto.direccion;
-    // }
+    if ( updateJugadorDto.cuentas ) {
+      await this.jugadorRepository.save({ cuentas, ...jugadorDto });
+    } else {
+      
+      await this.jugadorRepository.save({ cuentas: [], ...jugadorDto });
+    }
+
     // jugadorDto.cuentas = [];
 
     // Guarda el jugadorDto actualizado

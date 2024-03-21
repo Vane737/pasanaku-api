@@ -7,6 +7,7 @@ import { UpdateCuentaDto } from './dto/update-cuenta.dto';
 
 import { Cuenta } from './entities/cuenta.entity';
 import { Jugador } from 'src/jugadores/entities/jugador.entity';
+import { Banco } from 'src/banco/entities/banco.entity';
 
 
 @Injectable()
@@ -18,22 +19,32 @@ export class CuentaService {
   constructor( 
     @InjectRepository( Cuenta ) private readonly cuentaRepository: Repository<Cuenta>, 
     @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>, 
+    @InjectRepository( Banco ) private readonly bancoRepository: Repository<Banco>, 
   ) { }
 
   async create(createCuentaDto: CreateCuentaDto) {
-    const { jugadorId, nro, departamento } = createCuentaDto;
+    const { jugadorId, nro, departamento, bancoId } = createCuentaDto;
 
     try {
       // Obtener el jugador de la base de datos
-      const jugador = await this.jugadorRepository.findOneBy({ id: jugadorId});
+      const jugador = await this.jugadorRepository.findOneBy({ id: jugadorId });
       if (!jugador) {
         throw new NotFoundException(`No se ha encontrado el jugador con el Id ${jugadorId}`);
+      }
+
+      // Obtener el banco de la base de datos
+      const banco = await this.bancoRepository.findOneBy({ id: bancoId });
+      if (!banco) {
+        throw new NotFoundException(`No se ha encontrado el banco con el Id ${bancoId}`);
       }
 
       // Crear una nueva cuenta
       const nuevaCuenta = new Cuenta();
       nuevaCuenta.nro = nro;
       nuevaCuenta.departamento = departamento;
+
+      // Asignar el banco a la nueva cuenta
+      nuevaCuenta.banco = banco;
 
       // Guardar la nueva cuenta en la base de datos
       const cuentaGuardada = await this.cuentaRepository.save(nuevaCuenta);
@@ -44,14 +55,15 @@ export class CuentaService {
       // Guardar el jugador actualizado en la base de datos
       await this.jugadorRepository.save(jugador);
 
-      return await this.jugadorRepository.findOneBy({ id: jugadorId}); // Devolver la cuenta guardada (opcional)
+      return await this.jugadorRepository.findOneBy({ id: jugadorId}); // Devolver la cuenta guardada
     } catch (error) {
       console.log(error);
       this.handleExceptions(error);
     }
   }
 
-  async findAll( id ) {
+
+  async findAll( id: string ) {
     try {
       // Buscar el jugador en la base de datos
       const jugador = await this.jugadorRepository.findOneBy({ id });
@@ -70,13 +82,16 @@ export class CuentaService {
   async findOne( id: string ) {
       // Buscar la cuenta en la base de datos
       const cuenta = await this.cuentaRepository.findOneBy({ id });
+      console.log({ cuenta });
+      
       if (!cuenta) {
         throw new NotFoundException(`No se ha encontrado la cuenta con el ID ${id}`);
       }
       return cuenta;
-
   }
 
+
+  
   async update( id: string, updateCuentaDto: UpdateCuentaDto ) {
     try {
       const { nro, departamento } = updateCuentaDto;
