@@ -1,4 +1,5 @@
-import { IsString, MaxLength, MinLength } from "class-validator";
+import { IsObject, IsString, MaxLength, MinLength } from "class-validator";
+import { Banco } from "src/banco/entities/banco.entity";
 
 export class CreateCuentaDto {
     
@@ -14,4 +15,9 @@ export class CreateCuentaDto {
     @IsString()
     @MinLength(1)
     jugadorId: string;
+    
+    @IsString()
+    @MinLength(1)
+    bancoId: string;
+
 }

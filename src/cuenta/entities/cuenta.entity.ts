@@ -1,3 +1,4 @@
+import { Banco } from "src/banco/entities/banco.entity";
 import { Jugador } from "src/jugadores/entities/jugador.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -22,5 +23,7 @@ export class Cuenta {
     )
     jugador: string;
 
-
+    // Relación Muchos a Uno: muchas cuentas pertenecen a un solo banco
+    @ManyToOne(() => Banco, banco => banco.cuentas, { eager:true })
+    banco: Banco;
 }

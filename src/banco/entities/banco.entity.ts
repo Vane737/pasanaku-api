@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Cuenta } from "src/cuenta/entities/cuenta.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
 export class Banco {
@@ -11,5 +12,9 @@ export class Banco {
     })
     nombre: string
 
-    
+      // Relación Uno a Muchos: un banco puede tener muchas cuentas
+    @OneToMany(() => Cuenta, cuenta => cuenta.banco, 
+    { cascade: true })
+    cuentas: Cuenta[];
+
 }
