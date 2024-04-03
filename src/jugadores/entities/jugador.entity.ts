@@ -6,7 +6,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 export class Jugador {
 
     @PrimaryGeneratedColumn('increment')
-    id: string
+    id: number
 
     @Column('text', {
         unique: true,
@@ -19,11 +19,18 @@ export class Jugador {
     @Column('text')
     ci: string
 
-    @Column('text')
+    @Column('text', {
+        unique: true
+    })
     email: string
     
     @Column('text')
     direccion: string
+
+    @Column('text', {
+        select: false
+    })
+    password: string
 
     @OneToMany( 
         () => Cuenta,

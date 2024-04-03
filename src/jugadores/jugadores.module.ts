@@ -11,6 +11,7 @@ import { Cuenta } from 'src/cuenta/entities/cuenta.entity';
   providers: [JugadoresService],
   imports: [
     TypeOrmModule.forFeature([ Jugador, Cuenta ])
-  ]
+  ],
+  exports: [ TypeOrmModule ]
 })
 export class JugadoresModule {}

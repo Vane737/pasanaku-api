@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString, MinLength } from "class-validator";
+import { IsArray, IsEmail, IsOptional, IsString, MinLength, isEmail, MaxLength } from 'class-validator';
 import { Cuenta } from "src/cuenta/entities/cuenta.entity";
 
 export class CreateJugadorDto {
@@ -16,12 +16,17 @@ export class CreateJugadorDto {
     ci: string;
 
     @IsString()
-    @MinLength(6)
+    @IsEmail()
     email: string;
 
     @IsString()
     @MinLength(2)
     direccion: string;
+
+    @IsString()
+    @MinLength(8)
+    @MaxLength(50)
+    password: string;
 
     @IsArray()
     @IsOptional()
