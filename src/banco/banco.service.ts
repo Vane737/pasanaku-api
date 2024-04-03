@@ -60,7 +60,6 @@ export class BancoService {
 
   async remove(id: string) {
     const banco = await this.findOne(id);
-
     await this.bancoRepository.remove( banco );
   }
 

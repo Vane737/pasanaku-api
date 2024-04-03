@@ -4,6 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JugadoresModule } from './jugadores/jugadores.module';
 import { BancoModule } from './banco/banco.module';
 import { CuentaModule } from './cuenta/cuenta.module';
+import { PartidaModule } from './partida/partida.module';
+import { MonedaModule } from './moneda/moneda.module';
+import { ParticipanteModule } from './participante/participante.module';
+import { RolesModule } from './roles/roles.module';
+
 
 
 console.log(process.env.DB_HOST)
@@ -27,6 +32,11 @@ console.log(process.env.DB_USERNAME)
     JugadoresModule,
     BancoModule,
     CuentaModule,
-  ]
+    PartidaModule,
+    MonedaModule,
+    ParticipanteModule,
+    RolesModule,
+  ],
+  controllers: []
 })
 export class AppModule {}
