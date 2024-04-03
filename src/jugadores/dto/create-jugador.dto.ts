@@ -20,6 +20,10 @@ export class CreateJugadorDto {
     email: string;
 
     @IsString()
+    @MinLength(6)
+    contraseñaHash: string;
+
+    @IsString()
     @MinLength(2)
     direccion: string;
 
