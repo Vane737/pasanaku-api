@@ -14,10 +14,10 @@ export class CreateCuentaDto {
 
     @IsString()
     @MinLength(1)
-    jugadorId: string;
+    jugadorId: number;
     
     @IsString()
     @MinLength(1)
-    bancoId: string;
+    bancoId: number;
 
 }

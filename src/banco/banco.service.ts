@@ -30,7 +30,7 @@ export class BancoService {
     return this.bancoRepository.find({});
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const banco = await this.bancoRepository.findOneBy({ id });
     if ( !banco ) {
       throw new NotFoundException(`El banco con el id ${ id } no fue encontrado.`)
@@ -38,13 +38,13 @@ export class BancoService {
     return banco;
   }
 
-  async update(id: string, updateBancoDto: UpdateBancoDto) {
+  async update(id: number, updateBancoDto: UpdateBancoDto) {
     const banco = await this.bancoRepository.findOneBy({ id });
 
     console.log(banco);
     
     if (!banco) {
-      throw new NotFoundException(`Jugador con el id ${id} no encontrado`);
+      throw new NotFoundException(`Banco con el id ${id} no encontrado`);
     }
 
     // Actualiza las propiedades del banco según el DTO
@@ -58,7 +58,7 @@ export class BancoService {
     return banco;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const banco = await this.findOne(id);
 
     await this.bancoRepository.remove( banco );

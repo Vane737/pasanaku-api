@@ -6,7 +6,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 export class Cuenta {
 
     @PrimaryGeneratedColumn('increment')
-    id: string
+    id: number
 
     @Column('text', {
         unique: true,

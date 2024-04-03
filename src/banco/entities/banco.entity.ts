@@ -5,7 +5,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 export class Banco {
 
     @PrimaryGeneratedColumn('increment')
-    id: string
+    id: number
 
     @Column('text', {
         unique: true,

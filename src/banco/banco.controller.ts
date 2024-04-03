@@ -18,17 +18,17 @@ export class BancoController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bancoService.findOne(id);
+  findOne(@Param('id') id: number) {
+    return this.bancoService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBancoDto: UpdateBancoDto) {
-    return this.bancoService.update(id, updateBancoDto);
+  update(@Param('id') id: number, @Body() updateBancoDto: UpdateBancoDto) {
+    return this.bancoService.update(+id, updateBancoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bancoService.remove(id);
+  remove(@Param('id') id: number) {
+    return this.bancoService.remove(+id);
   }
 }

@@ -13,22 +13,22 @@ export class CuentaController {
   }
 
   @Get('jugador/:id')
-  findAll(@Param('id') id: string) {
-    return this.cuentaService.findAll(id);
+  findAll(@Param('id') id: number) {
+    return this.cuentaService.findAll(+id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cuentaService.findOne(id);
+  findOne(@Param('id') id: number) {
+    return this.cuentaService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCuentaDto: UpdateCuentaDto) {
-    return this.cuentaService.update(id, updateCuentaDto);
+  update(@Param('id') id: number, @Body() updateCuentaDto: UpdateCuentaDto) {
+    return this.cuentaService.update(+id, updateCuentaDto);
   }
 
   @Delete('jugador/:jugadorId/cuenta/:cuentaId')
-  remove(@Param('jugadorId') jugadorId: string, @Param('cuentaId') cuentaId: string) {
-    return this.cuentaService.deleteCuentaFromJugador(jugadorId, cuentaId);
+  remove(@Param('jugadorId') jugadorId: number, @Param('cuentaId') cuentaId: string) {
+    return this.cuentaService.deleteCuentaFromJugador(+jugadorId, +cuentaId);
   }
 }
