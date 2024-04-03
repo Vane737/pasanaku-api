@@ -63,7 +63,7 @@ export class CuentaService {
   }
 
 
-  async findAll( id: string ) {
+  async findAll( id: number ) {
     try {
       // Buscar el jugador en la base de datos
       const jugador = await this.jugadorRepository.findOneBy({ id });
@@ -79,7 +79,7 @@ export class CuentaService {
   }
 
 
-  async findOne( id: string ) {
+  async findOne( id: number ) {
       // Buscar la cuenta en la base de datos
       const cuenta = await this.cuentaRepository.findOneBy({ id });
       console.log({ cuenta });
@@ -92,7 +92,7 @@ export class CuentaService {
 
 
   
-  async update( id: string, updateCuentaDto: UpdateCuentaDto ) {
+  async update( id: number, updateCuentaDto: UpdateCuentaDto ) {
     try {
       const { nro, departamento } = updateCuentaDto;
 
@@ -118,7 +118,7 @@ export class CuentaService {
 
 
 
-  async deleteCuentaFromJugador(jugadorId: string, cuentaId: string) {
+  async deleteCuentaFromJugador(jugadorId: number, cuentaId: number) {
     try {
       // Buscar el jugador en la base de datos
       const jugador = await this.jugadorRepository.findOneBy({ id: jugadorId });

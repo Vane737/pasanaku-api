@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateJugadorDto } from './dto/create-jugador.dto';
 import { UpdateJugadorDto } from './dto/update-jugador.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { Jugador } from './entities/jugador.entity';
 import { CuentaService } from 'src/cuenta/cuenta.service';
 import { Cuenta } from 'src/cuenta/entities/cuenta.entity';
+import * as bcrypt from 'bcrypt';
+import { LoginJugadorDto } from './dto/login-jugador.dto';
 
 @Injectable()
 export class JugadoresService {
@@ -24,13 +26,14 @@ export class JugadoresService {
   async create(createJugadorDto: CreateJugadorDto) {
 
     try {
-      const { cuentas = [], ...jugadorDetails } = createJugadorDto;
+      const { cuentas = [], password, ...jugadorDetails } = createJugadorDto;
       const jugador = this.jugadorRepository.create({ 
-        ...jugadorDetails, 
+        ...jugadorDetails,
+        password: bcrypt.hashSync( password, 10 ),
         cuentas: cuentas.map( cuenta => this.cuentaRepository.create({ nro: cuenta.nro, departamento: cuenta.departamento }) ) 
       });
       await this.jugadorRepository.save( jugador );
- 
+      delete jugador.password;
       return { ...jugador, cuentas };
 
     } catch (error) {      
@@ -50,7 +53,7 @@ export class JugadoresService {
   }
 
 
-  async findOne( id: string ) {
+  async findOne( id: number ) {
     const jugador = await this.jugadorRepository.findOneBy({ id });
     if ( !jugador ) {
       throw new NotFoundException(`El jugador con el id ${ id } no fue encontrado.`)
@@ -59,7 +62,7 @@ export class JugadoresService {
   }
 
 
-  async update( id: string, updateJugadorDto: UpdateJugadorDto ): Promise<Jugador> {
+  async update( id: number, updateJugadorDto: UpdateJugadorDto ): Promise<Jugador> {
     // Busca al jugador existente por su ID
     const { cuentas, ...jugadorDto } = await this.jugadorRepository.findOneBy({ id });
 
@@ -88,23 +91,29 @@ export class JugadoresService {
     if ( updateJugadorDto.direccion ) {
       jugadorDto.direccion =  updateJugadorDto.direccion;
     }
+    if ( updateJugadorDto.password ) {
+      jugadorDto.password =  updateJugadorDto.password;
+    }
     if ( updateJugadorDto.cuentas ) {
       await this.jugadorRepository.save({ cuentas, ...jugadorDto });
     } else {
-      
       await this.jugadorRepository.save({ cuentas: [], ...jugadorDto });
     }
 
     // jugadorDto.cuentas = [];
 
     // Guarda el jugadorDto actualizado
-    await console.log(jugadorDto)
-    await this.jugadorRepository.save({ cuentas, ...jugadorDto });
+    try {
+      await this.jugadorRepository.save({ cuentas, ...jugadorDto });
+      return await this.jugadorRepository.findOneBy({ id });
+      
+    } catch (error) {
+      this.handleExceptions(error);
+    }
 
-    return await this.jugadorRepository.findOneBy({ id });
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const jugador = await this.findOne(id);
 
     await this.jugadorRepository.remove( jugador );
@@ -124,13 +133,37 @@ export class JugadoresService {
     }
   }
 
-  private handleExceptions( error: any) {
+  async login( loginJugadorDto: LoginJugadorDto ) {
+
+    console.log(loginJugadorDto);
+    
+    const { password, email } = loginJugadorDto;
+    console.log(password, email);
+    
+
+    const jugador = await this.jugadorRepository.findOne({ 
+      where: { email }, 
+      select: { email: true, password: true, id :true }
+    });
+
+    console.log('Este es el jugador encontrado', jugador);
+    
+    if ( !jugador) 
+      throw new UnauthorizedException('Credenciales Incorrectas (correo)');
+
+    if ( !bcrypt.compareSync( password, jugador.password ) )
+      throw new UnauthorizedException('Credenciales Incorrectas (Contraseña)');
+
+    delete jugador.cuentas;
+    return jugador;
+  }
+
+  private handleExceptions( error: any): never {
     if( error.code === '23505')
       throw new BadRequestException( error.detail );
 
     this.logger.error( error )
 
     throw new InternalServerErrorException('Error al conectar al servidor')
-    
   }
 }

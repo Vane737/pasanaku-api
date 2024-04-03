@@ -7,7 +7,7 @@ import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typ
 export class Cuenta {
 
     @PrimaryGeneratedColumn('increment')
-    id: string
+    id: number
 
     @Column('text', {
         unique: true,

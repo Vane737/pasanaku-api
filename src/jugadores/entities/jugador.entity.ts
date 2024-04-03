@@ -7,33 +7,31 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 export class Jugador {
 
     @PrimaryGeneratedColumn('increment')
-    id: string
+    id: number
 
-    @Column('text')
+    @Column('text', {
+        unique: true,
+    })
     nombre: string
 
-    @Column('text', {
-        unique: true,
-    })
-    ci: string
-
-    @Column('text', {
-        unique: true,
-    })
+    @Column('text')
     telefono: string
 
     @Column('text')
-    direccion: string
-    
+    ci: string
+
     @Column('text', {
-        unique: true,
+        unique: true
     })
     email: string
-
+    
     @Column('text')
-    contraseñaHash: string
-    
-    
+    direccion: string
+
+    @Column('text', {
+        select: false
+    })
+    password: string
 
     @OneToMany( 
         () => Cuenta,
@@ -41,7 +39,6 @@ export class Jugador {
         { cascade: true, eager: true } )
     cuentas : Cuenta[];
 
-    
     @OneToMany(() => Participante, participante => participante.jugador)
     participantesDeJugador: Participante[];
 

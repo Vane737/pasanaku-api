@@ -12,6 +12,8 @@ import { Participante } from 'src/participante/entities/participante.entity';
   providers: [JugadoresService],
   imports: [
     TypeOrmModule.forFeature([ Jugador, Cuenta, Participante ])
-  ]
+  ],
+  exports: [ TypeOrmModule ]
+
 })
 export class JugadoresModule {}
