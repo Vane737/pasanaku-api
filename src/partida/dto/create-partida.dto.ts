@@ -44,5 +44,5 @@ export class CreatePartidaDto {
 
     @IsString()
     @IsNotEmpty()
-    monedaId: string;
+    monedaId: number;
 }

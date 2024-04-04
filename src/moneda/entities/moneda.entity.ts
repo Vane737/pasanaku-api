@@ -6,7 +6,7 @@ import { Partida } from 'src/partida/entities/partida.entity';
 export class Moneda {
 
     @PrimaryGeneratedColumn('increment')
-    id: string
+    id: number
 
     @Column({ type: 'text' })
     nombre: string

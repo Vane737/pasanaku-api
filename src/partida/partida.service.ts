@@ -20,22 +20,24 @@ export class PartidaService {
 
 
     async create(createPartidaDto: CreatePartidaDto): Promise<Partida> {
-            const moneda = await this.monedaRepository.findOneBy({ id: createPartidaDto.monedaId });
-            if (!moneda) {
-                throw new NotFoundException('La moneda especificada no existe');
-            }
-            const partida = this.partidaRepository.create({
-            ...createPartidaDto,
-            moneda,
-            });
-            return await this.partidaRepository.save(partida);
+        const moneda = await this.monedaRepository.findOneBy({ id: createPartidaDto.monedaId });
+        if (!moneda) {
+            throw new NotFoundException('La moneda especificada no existe');
+        }
+        const partida = this.partidaRepository.create({
+        ...createPartidaDto,
+        moneda,
+        });
+        return await this.partidaRepository.save(partida);
     }
+
 
     findAll() {
         return this.partidaRepository.find({});
     }    
     
-    async findOne(id: string) {
+    
+    async findOne(id: number) {
         const moneda = await this.partidaRepository.findOneBy({ id });
         if ( !moneda ) {
           throw new NotFoundException(`La partida con el id ${ id } no fue encontrado.`)
@@ -44,7 +46,7 @@ export class PartidaService {
     }
 
 
-    async remove(id: string) {
+    async remove(id: number) {
         const partida = await this.findOne(id);
         await this.partidaRepository.remove( partida );
       }
