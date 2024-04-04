@@ -30,7 +30,7 @@ export class MonedaService {
     return this.monedaRepository.find({});
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const moneda = await this.monedaRepository.findOneBy({ id });
     if ( !moneda ) {
       throw new NotFoundException(`La moneda con el id ${ id } no fue encontrado.`)
@@ -38,7 +38,7 @@ export class MonedaService {
     return moneda;
   }
 
-  async update(id: string, updateMonedaDto: UpdateMonedaDto) {
+  async update(id: number, updateMonedaDto: UpdateMonedaDto) {
     const moneda = await this.monedaRepository.findOneBy({ id });
 
     console.log(moneda);
@@ -59,7 +59,7 @@ export class MonedaService {
   }
 
 
-  async remove(id: string) {
+  async remove(id: number) {
     const moneda = await this.findOne(id);
     await this.monedaRepository.remove( moneda );
   }

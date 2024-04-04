@@ -24,18 +24,18 @@ export class CreateParticipanteDto {
 
     @IsString()
     @IsNotEmpty()
-    jugadorId: string;
+    jugadorId: number;
 
     @IsString()
     @IsNotEmpty()
-    partidaId: string;
+    partidaId: number;
 
     @IsString()
     @IsNotEmpty()
-    cuentaId: string;
+    cuentaId: number;
 
     @IsString()
     @IsNotEmpty()
-    rolId: string;
+    rolId: number;
 
 }
