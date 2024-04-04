@@ -28,10 +28,8 @@ export class Jugador {
     @Column('text')
     direccion: string
 
-    @Column('text', {
-        select: false
-    })
-    password: string
+    @Column('text', {select: false,nullable: true})
+    password:  string | null;
 
     @OneToMany( 
         () => Cuenta,

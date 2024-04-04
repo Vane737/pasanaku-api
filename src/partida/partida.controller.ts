@@ -18,7 +18,7 @@ export class PartidaController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.partidaService.findOne( id );
   }
 
@@ -30,7 +30,7 @@ export class PartidaController {
   }
 */
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.partidaService.remove( id );
   }
 

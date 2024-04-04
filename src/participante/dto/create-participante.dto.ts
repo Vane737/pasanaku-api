@@ -28,7 +28,7 @@ export class CreateParticipanteDto {
 
     @IsString()
     @IsNotEmpty()
-    partidaId: string;
+    partidaId: number;
 
     @IsNumber()
     @IsNotEmpty()
@@ -36,6 +36,6 @@ export class CreateParticipanteDto {
 
     @IsString()
     @IsNotEmpty()
-    rolId: string;
+    rolId: number;
 
 }

@@ -7,7 +7,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 export class Partida {
 
     @PrimaryGeneratedColumn('increment')
-    id: string
+    id: number
 
     @Column({ type: 'text' })
     nombre: string
