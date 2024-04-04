@@ -22,17 +22,17 @@ export class CreateParticipanteDto {
     @IsEnum(EstadoParticipante)
     estado: 'Pago' | 'Debe' | 'Espera' | 'Ganador';
 
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
-    jugadorId: string;
+    jugadorId: number;
 
     @IsString()
     @IsNotEmpty()
     partidaId: string;
 
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
-    cuentaId: string;
+    cuentaId: number;
 
     @IsString()
     @IsNotEmpty()
