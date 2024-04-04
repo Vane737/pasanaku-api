@@ -5,12 +5,7 @@ import { SendWhatsAppDto } from './dto/sendWhatsAppDto.dto';
 @Injectable()
 export class NotificationService {
 
-    private readonly client: Twilio;
-    constructor() {
-        const accountSid = 'AC68304aaa3eb229addaef404c43640a58';
-        const authToken = 'd661fc336ae9625c04c5df7f8418dfd9';
-        this.client = require('twilio')(accountSid, authToken);
-      }
+    constructor() {      }
 
       async sendWhatsAppMessage(sendWhatsAppDto: SendWhatsAppDto): Promise<any> {
         try {
@@ -18,7 +13,7 @@ export class NotificationService {
 
             const body = `Hola ${nombre}, gracias por registrarte con el email ${email}..\n\n` + 
             `En este momento solo puedo enviar con el numero que te asigna twilio, todavia estoy viendo lo de Meta Bussiness:\n`;
-            const from = 'whatsapp:+14155238886';
+            const from = 'whatsapp:';
             const to = `whatsapp:${numero}`;
 
             const message = await this.client.messages.create({ body, from, to });
