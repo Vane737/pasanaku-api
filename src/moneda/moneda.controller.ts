@@ -18,17 +18,17 @@ export class MonedaController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.monedaService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMonedaDto: UpdateMonedaDto) {
+  update(@Param('id') id: number, @Body() updateMonedaDto: UpdateMonedaDto) {
     return this.monedaService.update(id, updateMonedaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.monedaService.remove(id);
   }
 }

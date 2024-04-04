@@ -65,7 +65,6 @@ export class JugadoresService {
   async update( id: number, updateJugadorDto: UpdateJugadorDto ): Promise<Jugador> {
     // Busca al jugador existente por su ID
     const { cuentas, ...jugadorDto } = await this.jugadorRepository.findOneBy({ id });
-
     console.log(jugadorDto);
     
     if (!jugadorDto) {
@@ -115,7 +114,6 @@ export class JugadoresService {
 
   async remove(id: number) {
     const jugador = await this.findOne(id);
-
     await this.jugadorRepository.remove( jugador );
   }
 
