@@ -7,6 +7,7 @@ export class ParticipanteController {
 
    constructor(private readonly participanteService: ParticipanteService) {}
 
+  
   @Post()
   create(@Body() createParticipanteDto: CreateParticipanteDto) {
     return this.participanteService.create( createParticipanteDto );

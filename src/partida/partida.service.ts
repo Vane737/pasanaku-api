@@ -28,7 +28,9 @@ export class PartidaService {
         ...createPartidaDto,
         moneda,
         });
+
         return await this.partidaRepository.save(partida);
+
     }
 
 

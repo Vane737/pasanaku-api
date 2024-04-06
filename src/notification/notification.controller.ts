@@ -1,6 +1,6 @@
 import { Controller, Post,Body } from '@nestjs/common';
 import { SendWhatsAppDto } from './dto/sendWhatsAppDto.dto';
-//import { NotificationService } from './notification.service';
+import { NotificationService } from './notification.service';
 
 @Controller('notification')
 export class NotificationController {

@@ -12,6 +12,7 @@ import { ParticipanteModule } from './participante/participante.module';
 import { RolesModule } from './roles/roles.module';
 import { CustomExceptionFilter } from './filters/custom-exception.filter';
 import { NotificationModule } from './notification/notification.module';
+import { InvitacionModule } from './invitacion/invitacion.module';
 
 
 
@@ -41,6 +42,7 @@ console.log(process.env.DB_USERNAME)
     ParticipanteModule,
     RolesModule,
     NotificationModule,
+    InvitacionModule,
   ],
   controllers: [],
   providers: [

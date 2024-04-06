@@ -42,7 +42,7 @@ export class CreatePartidaDto {
     @IsEnum(EstadoPartida)
     estado: 'Espera' | 'Iniciada' | 'Finalizada';
 
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
     monedaId: number;
 }
