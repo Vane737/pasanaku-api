@@ -1,10 +1,11 @@
 
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 import { Cuenta } from "src/cuenta/entities/cuenta.entity";
 import { Jugador } from "src/jugadores/entities/jugador.entity";
 import { Partida } from "src/partida/entities/partida.entity";
 import { Role } from "src/roles/entities/role.entity";
+import { Invitacion } from "src/invitacion/entities/invitacion.entity";
 
 @Entity()
 export class Participante {
@@ -30,8 +31,10 @@ export class Participante {
     @ManyToOne(() => Role, rol => rol.participantesRol, { eager: true })
     rol: Role;
 
-    @OneToOne(() => Cuenta, cuenta => cuenta.participante, { eager: true })
-    @JoinColumn({name :'cuentaId'})
-    cuenta: Cuenta;
+    @OneToOne(() => Cuenta, cuenta => cuenta.participante, { eager: true, nullable: true })
+    @JoinColumn({ name: 'cuentaId' })
+    cuenta: Cuenta | null;
 
+    @OneToMany(() => Invitacion, invitacion => invitacion.participante)
+    invitacionesDeParticipante: Invitacion[];
 }

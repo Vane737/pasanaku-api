@@ -1,4 +1,5 @@
 import { Cuenta } from "src/cuenta/entities/cuenta.entity";
+import { Invitacion } from "src/invitacion/entities/invitacion.entity";
 import { Participante } from "src/participante/entities/participante.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -9,15 +10,18 @@ export class Jugador {
     @PrimaryGeneratedColumn('increment')
     id: number
 
-    @Column('text', {
-        unique: true,
-    })
+    @Column('text')
     nombre: string
 
+    @Column('text', {
+        unique: true
+    })
     @Column('text')
     telefono: string
 
-    @Column('text')
+    @Column('text', {
+        unique: true
+    })
     ci: string
 
     @Column('text', {
@@ -28,8 +32,8 @@ export class Jugador {
     @Column('text')
     direccion: string
 
-    @Column('text', {select: false,nullable: true})
-    password:  string | null;
+    @Column('text', {select: false})
+    password:  string;
 
     @OneToMany( 
         () => Cuenta,
@@ -40,4 +44,6 @@ export class Jugador {
     @OneToMany(() => Participante, participante => participante.jugador)
     participantesDeJugador: Participante[];
 
+    @OneToMany(() => Invitacion, invitacion => invitacion.jugador)
+    invitacionesDeJugador: Invitacion[];    
 }

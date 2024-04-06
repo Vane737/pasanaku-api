@@ -1,15 +1,36 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { CreateParticipanteDto } from 'src/participante/dto/create-participante.dto';
+import { ParticipanteService } from 'src/participante/participante.service';
 import { CreatePartidaDto } from './dto/create-partida.dto';
 import { UpdatePartidaDto } from './dto/update-partida.dto';
 import { PartidaService } from './partida.service';
 
 @Controller('partida')
 export class PartidaController {
-  constructor(private readonly partidaService: PartidaService) {}
+  constructor(
+    private readonly partidaService: PartidaService,
+    private readonly participanteService: ParticipanteService
+
+    ) {}
 
   @Post()
-  create(@Body() createPartidaDto: CreatePartidaDto) {
-    return this.partidaService.create( createPartidaDto );
+  async create(@Body() requestData: any) {
+    console.log(requestData);
+    const createPartidaDto = requestData.createPartidaDto;
+    const idJugador = requestData.idJugador;
+    
+    const partida = await this.partidaService.create( createPartidaDto );
+    const createParticipanteDto: CreateParticipanteDto = {
+      cuota: 0,
+      recibido: false,
+      estado: 'Espera',
+      jugadorId: idJugador,
+      partidaId: partida.id,
+      rolId: 1
+    };
+    const participante = await this.participanteService.create(createParticipanteDto);
+    return partida;
+    
   }
 
   @Get()

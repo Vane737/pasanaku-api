@@ -18,17 +18,15 @@ export class ParticipanteService {
         @InjectRepository( Partida ) private readonly partidaRepository: Repository<Partida>, 
         @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>, 
         @InjectRepository( Role ) private readonly roleRepository: Repository<Role>, 
-        @InjectRepository( Cuenta ) private readonly cuentaRepository: Repository<Cuenta>, 
         @InjectRepository( Participante ) private readonly participanteRepository: Repository<Participante>, 
     ) { }
 
     async create(createParticipanteDto: CreateParticipanteDto): Promise<Participante> {
         this.logger.log('Iniciando el método create()...');
-        const { partidaId, jugadorId, cuentaId, rolId, ...rest } = createParticipanteDto;
-        const [partida, jugador, cuenta, rol] = await Promise.all([
+        const { partidaId, jugadorId, rolId, ...rest } = createParticipanteDto;
+        const [partida, jugador, rol] = await Promise.all([
             this.partidaRepository.findOneBy({ id: partidaId }),
             this.jugadorRepository.findOneBy({ id: jugadorId }),
-            this.cuentaRepository.findOneBy({ id: cuentaId }),
             this.roleRepository.findOneBy({ id: rolId }),
         ]);
         this.logger.log('Iniciando el método create()...');
@@ -38,19 +36,14 @@ export class ParticipanteService {
         if (!partida) {
             throw new NotFoundException('El partida especificada no existe');
         }
-        if (!cuenta) {
-            throw new NotFoundException('El cuenta especificada no existe');
-        }
-
         const participante = this.participanteRepository.create({
             partida,
             jugador,
-            cuenta,
+            cuenta: null,
             rol,
             ...rest,
           });
-
-        return await this.participanteRepository.save(participante);
+        return await this.participanteRepository.save(participante);        
     }
 
         

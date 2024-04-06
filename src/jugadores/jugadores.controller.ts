@@ -11,6 +11,7 @@ export class JugadoresController {
 
   @Post('register')
   async create(@Body() createJugadorDto: CreateJugadorDto) {
+    console.log('Datos recibidos en el cuerpo de la solicitud:', createJugadorDto);
     const jugadorCreado = await this.jugadoresService.create(createJugadorDto);
     return {
       status: 201,

@@ -16,5 +16,6 @@ import { Role } from 'src/roles/entities/role.entity';
   imports: [
     TypeOrmModule.forFeature([Participante, Partida, Jugador, Cuenta, Role]), // Importa las entidades Moneda y Partida
   ],
+  exports: [ParticipanteService],
 })
 export class ParticipanteModule {}

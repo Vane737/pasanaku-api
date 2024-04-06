@@ -1,4 +1,5 @@
 import { Catch, ExceptionFilter, ArgumentsHost,NotFoundException,InternalServerErrorException, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { ValidationError } from 'class-validator';
 import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
@@ -32,4 +33,10 @@ export class CustomExceptionFilter implements ExceptionFilter {
       error: exception.name,
     });
   }
+
+  private extractValidationErrorMessage(errors: ValidationError[]): string {
+    const messages = errors.map(err => Object.values(err.constraints)).flat();
+    return messages.join(', ');
+  }
+
 }
