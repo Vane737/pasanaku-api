@@ -21,5 +21,10 @@ export class InvitacionController {
   enviar(@Param('id') id: number) {
     return this.invitacionService.enviar(id);
   }
+
+  @Post('enviarTodos/:id')
+  enviarTodos(@Param('id') id: number) {
+    return this.invitacionService.enviarTodos(id);
+  }
   
 }

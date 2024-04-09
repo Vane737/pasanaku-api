@@ -21,7 +21,7 @@ export class NotificationService {
       
       async sendWhatsAppMessage(nombre: string,invitacion: Invitacion,partida: Partida): Promise<any> {
         try {
-          const body = `Hola ${invitacion.nombre}..\n\n` + 
+          const body = `Hola ${invitacion.nombre}.\n\n` + 
           `A sido invitado a la partida ${partida.nombre}, con un monto de ${partida.pozo}\n` + 
           `por el jugador ${nombre}\n\n` + 
           `La partida empieza el ${partida.fechaInicio}\n`;
@@ -30,6 +30,7 @@ export class NotificationService {
           const to = `whatsapp:+591${invitacion.telefono}`;
           const message = await this.client.messages.create({ body, from, to });
 
+          console.log('Mensage enviado correctamente a' + invitacion.nombre);
           return 'success';
   
           } catch (error) {

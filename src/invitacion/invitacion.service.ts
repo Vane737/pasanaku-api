@@ -52,6 +52,21 @@ export class InvitacionService {
     }
 
 
+    async enviarTodos(id: number) {
+        const invitados = await this.invitacionRepository.createQueryBuilder("invitacion")
+            .select("invitacion.id")
+            .where("invitacion.partidaId = :id", { id })
+            .andWhere("invitacion.estado = :estado", { estado: 'Espera' })
+            .getMany();
+
+        const respuestas = [];    
+        for (const invitado of invitados) {
+            const respuesta = await this.enviar(invitado.id);
+            respuestas.push(respuesta);
+        }
+        return respuestas;
+    }
+
     async enviar(id: number) {
         const invitado = await this.invitacionRepository.find({
             where: { id: id },
@@ -70,6 +85,8 @@ export class InvitacionService {
         console.log(send2);
 
         if(send1 == 'success' && send2 == 'success'){
+            invitado[0].estado = 'Enviada';
+            await this.invitacionRepository.save(invitado[0]); 
             return 'success';
         }else{
             return 'fail';

@@ -33,7 +33,7 @@ export class MailService {
                 cant: partida.participantes,
             },
         });
-        console.log("Correo enviado correctamente");
+        console.log("Correo enviado correctamente" + invitacion.nombre);
         return 'success';
 
         } catch (error) {
