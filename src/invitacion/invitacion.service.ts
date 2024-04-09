@@ -6,6 +6,8 @@ import { Invitacion } from './entities/invitacion.entity';
 import { Participante } from 'src/participante/entities/participante.entity';
 import { Jugador } from 'src/jugadores/entities/jugador.entity';
 import { CreateInvitacionDto } from './dto/create-invitacion.dto';
+import { NotificationService } from 'src/notification/notification.service';
+import { MailService } from 'src/mail/mail.service';
 
 
 
@@ -17,6 +19,8 @@ export class InvitacionService {
         @InjectRepository( Invitacion ) private readonly invitacionRepository: Repository<Invitacion>, 
         @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>, 
         @InjectRepository( Participante ) private readonly participanteRepository: Repository<Participante>, 
+        private readonly notificationService: NotificationService,
+        private readonly mailService: MailService,
     ) { }
 
     async create(createInvitacionDto: CreateInvitacionDto): Promise<Invitacion> {
@@ -47,5 +51,30 @@ export class InvitacionService {
         return invitados;
     }
 
+
+    async enviar(id: number) {
+        const invitado = await this.invitacionRepository.find({
+            where: { id: id },
+            relations: ['participante', 'participante.jugador'],
+            select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'],
+        }); 
+
+        const nombre = invitado[0].participante.jugador.nombre;
+        const invitacion = invitado[0];
+        const partida = invitado[0].participante.partida;
+            
+        const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
+        const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
+
+        console.log(send1);
+        console.log(send2);
+
+        if(send1 == 'success' && send2 == 'success'){
+            return 'success';
+        }else{
+            return 'fail';
+        }
+        
+    }
 
 }

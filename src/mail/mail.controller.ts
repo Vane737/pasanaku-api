@@ -6,10 +6,11 @@ import { MailService } from './mail.service';
 export class MailController {
   constructor(private readonly mailService: MailService) {}
 
+  /*
   @Post()
   sendInviteMail(@Body() createEmailDto: CreateEmailDto) {
     return this.mailService.sendInviteMail(createEmailDto);
   }
-  
+  */
 }
 

@@ -10,6 +10,7 @@ import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Invitacion } from 'src/invitacion/entities/invitacion.entity';
 import { Participante } from 'src/participante/entities/participante.entity';
+import { Partida } from 'src/partida/entities/partida.entity';
 @Module({
   controllers: [MailController],
   providers: [MailService],
@@ -36,7 +37,8 @@ import { Participante } from 'src/participante/entities/participante.entity';
           },
       }),
     }),
-    TypeOrmModule.forFeature([Invitacion, Participante ]),
+    TypeOrmModule.forFeature([Invitacion, Participante, Partida ]),
   ],
+  exports: [MailService],
 })
 export class MailModule {}
