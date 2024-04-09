@@ -17,5 +17,9 @@ export class InvitacionController {
     };
   }
 
+  @Post('enviar/:id')
+  enviar(@Param('id') id: number) {
+    return this.invitacionService.enviar(id);
+  }
   
 }

@@ -6,17 +6,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Invitacion } from './entities/invitacion.entity';
 import { Participante } from 'src/participante/entities/participante.entity';
 import { Jugador } from 'src/jugadores/entities/jugador.entity';
+import { NotificationModule } from 'src/notification/notification.module';
+import { MailModule } from 'src/mail/mail.module';
 
 
 @Module({
   controllers: [InvitacionController],
   providers: [InvitacionService],
   imports: [
+    NotificationModule,
+    MailModule,
     TypeOrmModule.forFeature([ Jugador, Invitacion, Participante ])
   ],
   exports: [ 
     TypeOrmModule,
-    InvitacionService 
+    InvitacionService,
   ]
 
 })

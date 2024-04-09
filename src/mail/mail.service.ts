@@ -7,6 +7,7 @@ import { Invitacion } from 'src/invitacion/entities/invitacion.entity';
 import { Participante } from 'src/participante/entities/participante.entity';
 import { CreateEmailDto } from './dto/create-invitacion.dto';
 import path from 'path';
+import { Partida } from 'src/partida/entities/partida.entity';
 
 @Injectable()
 export class MailService {
@@ -17,17 +18,39 @@ export class MailService {
         private mailerService: MailerService,
     ) { }
 
+
+    async sendInviteMail(nombre: string,invitacion: Invitacion,partida: Partida) {
+        try {
+        await this.mailerService.sendMail({
+            to: invitacion.email,
+            subject: 'Invitación a nueva Partida',
+            template: './invitacion',
+            context: {
+                event: partida.nombre,
+                invitado: invitacion.nombre,
+                jugador: nombre,
+                monto: partida.pozo,
+                cant: partida.participantes,
+            },
+        });
+        console.log("Correo enviado correctamente");
+        return 'success';
+
+        } catch (error) {
+            console.error("Error al enviar el correo:", error);
+        }
+        
+    }
+
+    /*
+    //Pruebaa envio directo
     async sendInviteMail(createEmailDto: CreateEmailDto) {
         const { invitacionId } = createEmailDto;
         console.log(invitacionId);
         var [invitacion] = await Promise.all([
             this.invitacionRepository.findOneBy({ id: invitacionId }),
-        ]);
-        console.log(invitacion.email);
-        
+        ]);       
         var partida = invitacion.participante.partida;
-        console.log(partida);
-
         try {
         await this.mailerService.sendMail({
             to: invitacion.email,
@@ -43,8 +66,9 @@ export class MailService {
         console.log("Correo enviado correctamente");
         } catch (error) {
             console.error("Error al enviar el correo:", error);
-            // Aquí puedes realizar cualquier acción adicional o registrar el error según sea necesario
         }
+
       return 'Email sent';
     }
+    */
 }

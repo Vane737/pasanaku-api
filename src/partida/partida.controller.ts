@@ -36,8 +36,8 @@ export class PartidaController {
     
   }
 
-  @Get(':id')
-  findAll(@Param('id') id: number){
+  @Get()
+  findAll(){
     return this.partidaService.findAll();
   }
 
