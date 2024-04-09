@@ -51,5 +51,8 @@ export class PartidaService {
     async remove(id: number) {
         const partida = await this.findOne(id);
         await this.partidaRepository.remove( partida );
-      }
+    }
+
+
+    
 }

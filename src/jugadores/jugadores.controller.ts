@@ -71,10 +71,19 @@ export class JugadoresController {
       status: 200,
       message: 'Jugador actualizado exitosamente',
       data: jugadorActualizado,
-      };
-
+      };    
   }
 
+  @Get(':id/participaciones')
+  async getParticipaciones(@Param('id') id: number) {
+    const participaciones = await this.jugadoresService.getParticipaciones(id);
+    console.log(participaciones);
+    return {
+      status: 200,
+      message: 'Participaciones del jugador conseguidas exitosamente',
+      data: participaciones,
+     };
+  }
   
   
 }

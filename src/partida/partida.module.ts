@@ -7,13 +7,14 @@ import { Partida } from './entities/partida.entity';
 import { Moneda } from 'src/moneda/entities/moneda.entity';
 import { Participante } from 'src/participante/entities/participante.entity';
 import { ParticipanteModule } from 'src/participante/participante.module';
-import { ParticipanteService } from 'src/participante/participante.service';
+import { InvitacionModule } from 'src/invitacion/invitacion.module';
 
 @Module({
   controllers: [PartidaController],
   providers: [PartidaService],
   imports: [
     ParticipanteModule,
+    InvitacionModule,
     TypeOrmModule.forFeature([Partida,Moneda,Participante])
     
   ]

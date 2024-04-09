@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { InvitacionService } from 'src/invitacion/invitacion.service';
 import { CreateParticipanteDto } from 'src/participante/dto/create-participante.dto';
 import { ParticipanteService } from 'src/participante/participante.service';
 import { CreatePartidaDto } from './dto/create-partida.dto';
@@ -7,9 +8,11 @@ import { PartidaService } from './partida.service';
 
 @Controller('partida')
 export class PartidaController {
+
   constructor(
     private readonly partidaService: PartidaService,
-    private readonly participanteService: ParticipanteService
+    private readonly participanteService: ParticipanteService,
+    private readonly invitacionService: InvitacionService
 
     ) {}
 
@@ -33,8 +36,8 @@ export class PartidaController {
     
   }
 
-  @Get()
-  findAll() {
+  @Get(':id')
+  findAll(@Param('id') id: number){
     return this.partidaService.findAll();
   }
 
@@ -55,4 +58,14 @@ export class PartidaController {
     return this.partidaService.remove( id );
   }
 
+  @Get(':id/invitados')
+  async getInvitados(@Param('id') id: number) {
+    const invitados = await this.invitacionService.getInvitados(id);
+    console.log(invitados);
+    return {
+      status: 200,
+      message: 'Lista de invitados a la partida conseguida exitosamente',
+      data: invitados,
+     };
+  }
 }

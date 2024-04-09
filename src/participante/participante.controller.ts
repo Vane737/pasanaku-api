@@ -10,6 +10,7 @@ export class ParticipanteController {
   
   @Post()
   create(@Body() createParticipanteDto: CreateParticipanteDto) {
+    console.log('controller');
     return this.participanteService.create( createParticipanteDto );
   }
 

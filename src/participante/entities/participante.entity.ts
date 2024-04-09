@@ -25,13 +25,13 @@ export class Participante {
     @ManyToOne(() => Partida, partida => partida.participantesEnPartida, { eager: true })
     partida: Partida;
 
-    @ManyToOne(() => Jugador, jugador => jugador.participantesDeJugador, { eager: true })
+    @ManyToOne(() => Jugador, jugador => jugador.participantesDeJugador)
     jugador: Jugador;
 
     @ManyToOne(() => Role, rol => rol.participantesRol, { eager: true })
     rol: Role;
 
-    @OneToOne(() => Cuenta, cuenta => cuenta.participante, { eager: true, nullable: true })
+    @OneToOne(() => Cuenta, cuenta => cuenta.participante, { nullable: true })
     @JoinColumn({ name: 'cuentaId' })
     cuenta: Cuenta | null;
 

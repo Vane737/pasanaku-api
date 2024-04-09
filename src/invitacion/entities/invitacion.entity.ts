@@ -25,7 +25,7 @@ export class Invitacion {
     @ManyToOne(() => Participante, participante => participante.invitacionesDeParticipante, { eager: true })
     participante: Participante;
 
-    @ManyToOne(() => Jugador, jugador => jugador.invitacionesDeJugador, { eager: true, nullable: true  })
+    @ManyToOne(() => Jugador, jugador => jugador.invitacionesDeJugador, { nullable: true  })
     jugador: Jugador | null;
 
     @Column({ type: 'integer'})
