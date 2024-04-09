@@ -156,6 +156,13 @@ export class JugadoresService {
     return jugador;
   }
 
+
+  async getParticipaciones(id: number) {
+    const jugador = await this.jugadorRepository.findOneBy({ id });
+    const participaciones = jugador.participantesDeJugador;
+    return participaciones;
+  }
+
   private handleExceptions( error: any): never {
     if( error.code === '23505')
       throw new BadRequestException( error.detail );

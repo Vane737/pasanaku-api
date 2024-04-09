@@ -23,6 +23,7 @@ export class ParticipanteService {
 
     async create(createParticipanteDto: CreateParticipanteDto): Promise<Participante> {
         this.logger.log('Iniciando el método create()...');
+        
         const { partidaId, jugadorId, rolId, ...rest } = createParticipanteDto;
         const [partida, jugador, rol] = await Promise.all([
             this.partidaRepository.findOneBy({ id: partidaId }),
@@ -43,6 +44,10 @@ export class ParticipanteService {
             rol,
             ...rest,
           });
+
+        console.log(participante);
+        jugador.participantesDeJugador.push(participante);  
+          
         return await this.participanteRepository.save(participante);        
     }
 

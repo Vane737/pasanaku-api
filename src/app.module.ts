@@ -13,11 +13,9 @@ import { RolesModule } from './roles/roles.module';
 import { CustomExceptionFilter } from './filters/custom-exception.filter';
 import { NotificationModule } from './notification/notification.module';
 import { InvitacionModule } from './invitacion/invitacion.module';
+import { MailModule } from './mail/mail.module';
 
 
-
-console.log(process.env.DB_HOST)
-console.log(process.env.DB_USERNAME)
 
 @Module({
   imports: [
@@ -43,6 +41,7 @@ console.log(process.env.DB_USERNAME)
     RolesModule,
     NotificationModule,
     InvitacionModule,
+    MailModule,
   ],
   controllers: [],
   providers: [

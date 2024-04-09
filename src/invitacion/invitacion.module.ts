@@ -14,7 +14,10 @@ import { Jugador } from 'src/jugadores/entities/jugador.entity';
   imports: [
     TypeOrmModule.forFeature([ Jugador, Invitacion, Participante ])
   ],
-  exports: [ TypeOrmModule ]
+  exports: [ 
+    TypeOrmModule,
+    InvitacionService 
+  ]
 
 })
 export class InvitacionModule {}

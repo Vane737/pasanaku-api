@@ -41,9 +41,9 @@ export class Jugador {
         { cascade: true, eager: true } )
     cuentas : Cuenta[];
 
-    @OneToMany(() => Participante, participante => participante.jugador)
+    @OneToMany(() => Participante, participante => participante.jugador,{ cascade: true, eager: true })
     participantesDeJugador: Participante[];
 
-    @OneToMany(() => Invitacion, invitacion => invitacion.jugador)
+    @OneToMany(() => Invitacion, invitacion => invitacion.jugador,{ cascade: true})
     invitacionesDeJugador: Invitacion[];    
 }
