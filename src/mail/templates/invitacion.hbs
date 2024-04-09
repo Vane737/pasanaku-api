@@ -1,16 +1,60 @@
-<h2>¡Invitación al {{ event }}!</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación a {{ event }}</title>
+    <style>
+        /* Estilos para el banner */
+        .banner {
+            background-color: #FDE047;
+            height: 150px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
 
-<p>Estimado/a {{ invitado }},</p>
+        /* Estilos para la imagen */
+        .banner img {
+            height: 40px;
+            margin-left: 20px; /* Ajusta el margen según lo necesites */
+        }
 
-<p>El jugador {{ jugador }}  te a invitado a la partida {{ event }}:</p>
+        /* Estilos para el texto */
+        .banner p {
+            font-size: 24px; /* Tamaño del texto */
+            margin-left: 20px; /* Ajusta el margen según lo necesites */
+        }
 
-<ul>
-<li><strong>Evento:</strong> {{ event }}</li>
-<li><strong>Monto:</strong> {{ monto }}</li>
-<li><strong>Participantes:</strong> {{ cant }}</li>
-</ul>
+        /* Estilos para el contenido principal */
+        .content {
+            margin-top: 20px; /* Ajusta el margen según lo necesites */
+        }
+    </style>
+</head>
+<body>
+    <!-- Banner amarillo con imagen y texto -->
+    <div class="banner">
+
+    </div>
+
+    <!-- Contenido principal de la invitación -->
+    <div class="content">
+        <h2>¡Invitación al {{ event }}!</h2>
+
+        <p>Estimado/a {{ invitado }},</p>
+
+        <p>El jugador {{ jugador }}  te a invitado a la partida {{ event }}:</p>
+
+        <ul>
+        <li><strong>Evento:</strong> {{ event }}</li>
+        <li><strong>Monto:</strong> {{ monto }}</li>
+        <li><strong>Participantes:</strong> {{ cant }}</li>
+        </ul>
+    </div>
+</body>
+</html>
 
 
-<p>¡Esperamos verte allí!</p>
 
 

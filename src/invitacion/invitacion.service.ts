@@ -78,20 +78,21 @@ export class InvitacionService {
         const invitacion = invitado[0];
         const partida = invitado[0].participante.partida;
             
-        const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
+        //const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
         const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
 
-        console.log(send1);
+        /*console.log(send1);
         console.log(send2);
 
         if(send1 == 'success' && send2 == 'success'){
             invitado[0].estado = 'Enviada';
             await this.invitacionRepository.save(invitado[0]); 
-            return 'success';
+            
         }else{
             return 'fail';
         }
-        
+        */
+       return 'success';
     }
 
 }
