@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_FILTER } from '@nestjs/core';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
+
 
 import { JugadoresModule } from './jugadores/jugadores.module';
 import { BancoModule } from './banco/banco.module';
@@ -17,10 +20,14 @@ import { MailModule } from './mail/mail.module';
 
 
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'assets'),
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
