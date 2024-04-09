@@ -68,4 +68,15 @@ export class PartidaController {
       data: invitados,
      };
   }
+
+  @Get(':id/participantes')
+  async getParticipantes(@Param('id') id: number) {
+    const participantes = await this.participanteService.getParticipantes(id);
+    console.log(participantes);
+    return {
+      status: 200,
+      message: 'Lista de invitados a la partida conseguida exitosamente',
+      data: participantes,
+     };
+  }
 }

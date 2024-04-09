@@ -56,4 +56,13 @@ export class ParticipanteService {
         return this.participanteRepository.find({});
     }
 
+    async getParticipantes(id: number) {
+        const participantes = await this.participanteRepository.find({
+            where: {
+                partida: { id: id },
+            },
+            relations: ['jugador'], // Incluir la relación con el jugador
+        });    
+        return participantes;
+    }
 }
