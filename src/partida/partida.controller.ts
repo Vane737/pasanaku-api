@@ -58,6 +58,7 @@ export class PartidaController {
     return this.partidaService.remove( id );
   }
 
+  //Devuelve los Invitados de la partida
   @Get(':id/invitados')
   async getInvitados(@Param('id') id: number) {
     const invitados = await this.invitacionService.getInvitados(id);
@@ -69,13 +70,14 @@ export class PartidaController {
      };
   }
 
+  //Devuelve los participastes de la partida
   @Get(':id/participantes')
   async getParticipantes(@Param('id') id: number) {
     const participantes = await this.participanteService.getParticipantes(id);
     console.log(participantes);
     return {
       status: 200,
-      message: 'Lista de invitados a la partida conseguida exitosamente',
+      message: 'Lista de participantes de la partida conseguida exitosamente',
       data: participantes,
      };
   }

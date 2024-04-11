@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException, Put } from '@nestjs/common';
 import { CreateInvitacionDto } from './dto/create-invitacion.dto';
 import { InvitacionService } from './invitacion.service';
 
@@ -26,5 +26,20 @@ export class InvitacionController {
   enviarTodos(@Param('id') id: number) {
     return this.invitacionService.enviarTodos(id);
   }
+
+  @Get('invitaciones/:id')
+  invitaciones(@Param('id') id: number) {
+    return this.invitacionService.invitaciones(id);
+  }
   
+  @Put('aceptar/:id')
+  aceptar(@Param('id') id: number) {
+    return this.invitacionService.aceptar(id);
+  }
+
+  @Put('rechazar/:id')
+  rechazar(@Param('id') id: number) {
+    return this.invitacionService.rechazar(id);
+  }
+
 }
