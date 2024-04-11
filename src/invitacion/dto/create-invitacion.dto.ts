@@ -4,8 +4,8 @@ import { Cuenta } from "src/cuenta/entities/cuenta.entity";
 enum EstadoInvitacion{
     Espera = 'Espera',
     Enviada = 'Enviada',
-    Recibida ='Recibida',
-    Aceptada = 'Aceptada'   
+    Aceptada = 'Aceptada',
+    Rechazada = 'Rechazada'   
   }
 
 export class CreateInvitacionDto {  
@@ -26,7 +26,7 @@ export class CreateInvitacionDto {
     email: string;
 
     @IsEnum(EstadoInvitacion)
-    estado: 'Espera' | 'Enviada' | 'Recibida' | 'Aceptada';
+    estado: 'Espera' | 'Enviada' | 'Aceptada' | 'Rechazada';
     
     @IsNumber()
     @IsNotEmpty()

@@ -74,6 +74,8 @@ export class JugadoresController {
       };    
   }
 
+  
+  //Devuelve las participaciones del jugador, en ellas esta la partida en la que participan
   @Get(':id/participaciones')
   async getParticipaciones(@Param('id') id: number) {
     const participaciones = await this.jugadoresService.getParticipaciones(id);
