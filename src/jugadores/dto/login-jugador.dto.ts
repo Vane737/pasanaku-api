@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import {  IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import {  IsEmail, IsString, MinLength, MaxLength, IsOptional } from 'class-validator';
 
 export class LoginJugadorDto {
 
@@ -13,5 +13,9 @@ export class LoginJugadorDto {
     @MaxLength(50)
     @Transform(({ value }) => value.trim())
     password: string;
+
+    @IsString()
+    @IsOptional()
+    tokenMovil?: string;
 
 }

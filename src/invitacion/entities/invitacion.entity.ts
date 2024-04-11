@@ -19,8 +19,8 @@ export class Invitacion {
     @Column('text')
     email: string
 
-    @Column({ type: 'enum', enum: ['Espera', 'Enviada', 'Recibida','Aceptada'] })
-    estado: 'Espera' | 'Enviada' | 'Recibida' | 'Aceptada';
+    @Column({ type: 'enum', enum: ['Espera', 'Enviada', 'Aceptada', 'Rechazada'] })
+    estado: 'Espera' | 'Enviada' | 'Aceptada' | 'Rechazada';
 
     @ManyToOne(() => Participante, participante => participante.invitacionesDeParticipante, { eager: true })
     participante: Participante;

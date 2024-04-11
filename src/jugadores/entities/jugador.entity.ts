@@ -16,7 +16,6 @@ export class Jugador {
     @Column('text', {
         unique: true
     })
-    @Column('text')
     telefono: string
 
     @Column('text', {
@@ -35,6 +34,9 @@ export class Jugador {
     @Column('text', {select: false})
     password:  string;
 
+    @Column({ nullable: true })
+    tokenMovil: string | null
+    
     @OneToMany( 
         () => Cuenta,
         (cuenta) => cuenta.jugador, 
@@ -46,4 +48,5 @@ export class Jugador {
 
     @OneToMany(() => Invitacion, invitacion => invitacion.jugador,{ cascade: true})
     invitacionesDeJugador: Invitacion[];    
+
 }

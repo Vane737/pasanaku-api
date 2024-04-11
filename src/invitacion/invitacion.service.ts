@@ -8,6 +8,8 @@ import { Jugador } from 'src/jugadores/entities/jugador.entity';
 import { CreateInvitacionDto } from './dto/create-invitacion.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { MailService } from 'src/mail/mail.service';
+import { CreateParticipanteDto } from 'src/participante/dto/create-participante.dto';
+import { ParticipanteService } from 'src/participante/participante.service';
 
 
 
@@ -21,6 +23,7 @@ export class InvitacionService {
         @InjectRepository( Participante ) private readonly participanteRepository: Repository<Participante>, 
         private readonly notificationService: NotificationService,
         private readonly mailService: MailService,
+        private readonly participanteService: ParticipanteService,
     ) { }
 
     async create(createInvitacionDto: CreateInvitacionDto): Promise<Invitacion> {
@@ -38,11 +41,12 @@ export class InvitacionService {
             partidaId: partida.id,
             ...rest,
           });
+          
         return await this.invitacionRepository.save(invitacion);
 
     }
 
-
+    //Devuelve los invitados de la partida
     async getInvitados(id: number) {
         const invitados = await this.invitacionRepository.find({
             where: { partidaId: id },
@@ -68,31 +72,94 @@ export class InvitacionService {
     }
 
     async enviar(id: number) {
-        const invitado = await this.invitacionRepository.find({
+        const invitado = await this.invitacionRepository.findOne({
             where: { id: id },
             relations: ['participante', 'participante.jugador'],
             select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'],
         }); 
 
-        const nombre = invitado[0].participante.jugador.nombre;
-        const invitacion = invitado[0];
-        const partida = invitado[0].participante.partida;
-            
-        //const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
+        //Asigna
+        if( invitado.jugador == null){
+            const jugador = await this.jugadorRepository.findOne({
+                where: { telefono: invitado.telefono }
+            });
+            if(jugador != null){
+                invitado.jugador = jugador;
+                await this.invitacionRepository.save(invitado);
+                console.log("Jugador asignado")
+            }
+        }
+
+        const nombre = invitado.participante.jugador.nombre;
+        const invitacion = invitado;
+        const partida = invitado.participante.partida;
+  
+        const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
         const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
 
-        /*console.log(send1);
+        console.log(send1);
         console.log(send2);
 
         if(send1 == 'success' && send2 == 'success'){
-            invitado[0].estado = 'Enviada';
-            await this.invitacionRepository.save(invitado[0]); 
-            
+            invitado.estado = 'Enviada';
+            await this.invitacionRepository.save(invitado);             
         }else{
             return 'fail';
         }
-        */
+        
+        //push
+        if( invitado.jugador != null){
+            console.log('Aqqui iria un push..... si tuviera UNO');
+        }   
        return 'success';
     }
 
+
+    //Devuelve las invitados del jugador
+    async invitaciones(id: number){
+        const invitados = await this.invitacionRepository.find ({
+            where: {
+                jugador: { id: id },
+            },
+            relations: ['participante','jugador'],
+            select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'],
+          });                  
+        return invitados;
+    }
+
+
+    //Acepta la invitacion
+    async aceptar(id: number) {
+        const invitacion = await this.invitacionRepository.findOne({
+            where: { id: id },
+            relations: ['participante','jugador'],
+            select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'],
+          });      
+        
+        const createParticipanteDto: CreateParticipanteDto = {
+            cuota: 0,
+            recibido: false,
+            estado: 'Espera',
+            jugadorId: invitacion.jugador.id,
+            partidaId: invitacion.participante.partida.id,
+            rolId: 2
+          };
+        const participante = await this.participanteService.create(createParticipanteDto);        
+        invitacion.estado = 'Aceptada';
+        await this.invitacionRepository.save(invitacion);   
+        return invitacion;
+    }
+
+
+    async rechazar(id: number) {
+        const invitacion = await this.invitacionRepository.findOne({
+            where: { id: id },
+          });      
+        
+        invitacion.estado = 'Rechazada';
+        await this.invitacionRepository.save(invitacion);   
+        return invitacion;
+    }
+
 }
+

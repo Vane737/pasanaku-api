@@ -19,8 +19,6 @@ import { InvitacionModule } from './invitacion/invitacion.module';
 import { MailModule } from './mail/mail.module';
 
 
-
-
 @Module({
   imports: [
     ConfigModule.forRoot({

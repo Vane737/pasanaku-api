@@ -2,13 +2,14 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { CreateJugadorDto } from './dto/create-jugador.dto';
 import { UpdateJugadorDto } from './dto/update-jugador.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { Jugador } from './entities/jugador.entity';
 import { CuentaService } from 'src/cuenta/cuenta.service';
 import { Cuenta } from 'src/cuenta/entities/cuenta.entity';
 import * as bcrypt from 'bcrypt';
 import { LoginJugadorDto } from './dto/login-jugador.dto';
+import { Invitacion } from 'src/invitacion/entities/invitacion.entity';
 
 @Injectable()
 export class JugadoresService {
@@ -16,11 +17,9 @@ export class JugadoresService {
   private readonly logger = new Logger('JugadoresService')
 
   constructor( 
-    @InjectRepository( Jugador ) 
-    private readonly jugadorRepository: Repository<Jugador>, 
-    
-    @InjectRepository( Cuenta ) 
-    private readonly cuentaRepository: Repository<Cuenta>, 
+    @InjectRepository( Jugador )private readonly jugadorRepository: Repository<Jugador>, 
+    @InjectRepository( Cuenta )private readonly cuentaRepository: Repository<Cuenta>,
+    @InjectRepository( Invitacion ) private readonly invitacionRepository: Repository<Invitacion>,  
     ) { }
 
   async create(createJugadorDto: CreateJugadorDto) {
@@ -34,6 +33,25 @@ export class JugadoresService {
       });
       await this.jugadorRepository.save( jugador );
       delete jugador.password;
+
+      //Asignar invitaciones
+      const invitaciones = await this.invitacionRepository.find({
+        where: {
+            telefono: jugador.telefono,
+            estado: In(['Espera', 'Enviada'])
+        },
+        relations: [],
+        select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'], 
+      });
+
+      
+      if (invitaciones.length > 0) {
+        for (const invitado of invitaciones) {
+            invitado.jugador = jugador;
+            await this.invitacionRepository.save(invitado);      
+        }
+      }
+
       return { ...jugador, cuentas };
 
     } catch (error) {      
@@ -133,30 +151,28 @@ export class JugadoresService {
 
   async login( loginJugadorDto: LoginJugadorDto ) {
 
-    console.log(loginJugadorDto);
-    
     const { password, email } = loginJugadorDto;
-    console.log(password, email);
-    
-
     const jugador = await this.jugadorRepository.findOne({ 
       where: { email }, 
-      select: { email: true, password: true, id :true }
+      select: { email: true, password: true, id :true, tokenMovil: true }
     });
 
     console.log('Este es el jugador encontrado', jugador);
-    
     if ( !jugador) 
       throw new UnauthorizedException('Credenciales Incorrectas (correo)');
-
     if ( !bcrypt.compareSync( password, jugador.password ) )
       throw new UnauthorizedException('Credenciales Incorrectas (Contraseña)');
+
+    if(loginJugadorDto.tokenMovil != undefined && loginJugadorDto.tokenMovil != null && jugador.tokenMovil != loginJugadorDto.tokenMovil) {
+      jugador.tokenMovil = loginJugadorDto.tokenMovil;
+      await this.jugadorRepository.save(jugador);
+    } 
 
     delete jugador.cuentas;
     return jugador;
   }
 
-
+  //Devuelve las participaciones del jugador, en ellas esta la partida en la que participan
   async getParticipaciones(id: number) {
     const jugador = await this.jugadorRepository.findOneBy({ id });
     const participaciones = jugador.participantesDeJugador;

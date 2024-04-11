@@ -21,16 +21,18 @@ export class NotificationService {
       
       async sendWhatsAppMessage(nombre: string,invitacion: Invitacion,partida: Partida): Promise<any> {
         try {
-          const body = `Hola ${invitacion.nombre}.\n\n` + 
+          const mediaUrl = ['https://i.kym-cdn.com/photos/images/original/001/666/080/25a.jpg'];
+          const body = `Hola ${invitacion.nombre}.` + 
           `A sido invitado a la partida ${partida.nombre}, con un monto de ${partida.pozo}\n` + 
           `por el jugador ${nombre}\n\n` + 
           `La partida empieza el ${partida.fechaInicio}\n`;
   
           const from = 'whatsapp:+14155238886';
           const to = `whatsapp:+591${invitacion.telefono}`;
-          const message = await this.client.messages.create({ body, from, to });
 
-          console.log('Mensage enviado correctamente a' + invitacion.nombre);
+          const message = await this.client.messages.create({ body, from, to, mediaUrl});
+
+          console.log('Mensage enviado correctamente a ' + invitacion.nombre);
           return 'success';
   
           } catch (error) {
