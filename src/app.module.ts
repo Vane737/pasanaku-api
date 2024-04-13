@@ -27,25 +27,22 @@ import { MailModule } from './mail/mail.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'assets'),
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get('DB_URL'),
       // host: process.env.POSTGRES_HOST,
       // port: +process.env.POSTGRES_PORT,
       // database: process.env.POSTGRES_DATABASE,
       // username: process.env.POSTGRES_USERNAME,
       // password: process.env.POSTGRES_PASSWORD,
-      autoLoadEntities: true, // Carga automaticamente las entidades
-      synchronize: true,  // Realiza las migraciones automaticamente
-      ssl: process.env.POSTGRES_SSL === "true",
-      extra: {
-        ssl: 
-        process.env.POSTGRES_SSL === "true"
-        ? {
-          rejectUnauthorized: false,
-        }
-        : null,
-      }
+        entities: ['dist/src/**/*.entity{.ts,.js}'],
+        autoLoadEntities: true, // Carga automaticamente las entidades
+        synchronize: true,  // Realiza las migraciones automaticamente
+        ssl: true,
+      }),
      }),
     JugadoresModule,
     BancoModule,
