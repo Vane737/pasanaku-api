@@ -32,7 +32,7 @@ import { MailModule } from './mail/mail.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
-        url: configService.get('DB_URL'),
+        url: configService.get('DATABASE_URL'),
       // host: process.env.POSTGRES_HOST,
       // port: +process.env.POSTGRES_PORT,
       // database: process.env.POSTGRES_DATABASE,
@@ -42,6 +42,11 @@ import { MailModule } from './mail/mail.module';
         autoLoadEntities: true, // Carga automaticamente las entidades
         synchronize: true,  // Realiza las migraciones automaticamente
         ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        }
       }),
      }),
     JugadoresModule,
