@@ -29,11 +29,12 @@ import { MailModule } from './mail/mail.module';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: +process.env.POSTGRES_PORT,
-      database: process.env.POSTGRES_DATABASE,
-      username: process.env.POSTGRES_USERNAME,
-      password: process.env.POSTGRES_PASSWORD,
+      url: process.env.DATABASE_URL,
+      // host: process.env.POSTGRES_HOST,
+      // port: +process.env.POSTGRES_PORT,
+      // database: process.env.POSTGRES_DATABASE,
+      // username: process.env.POSTGRES_USERNAME,
+      // password: process.env.POSTGRES_PASSWORD,
       autoLoadEntities: true, // Carga automaticamente las entidades
       synchronize: true,  // Realiza las migraciones automaticamente
       ssl: process.env.POSTGRES_SSL === "true",
