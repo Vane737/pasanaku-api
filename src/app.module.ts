@@ -37,15 +37,15 @@ import { MailModule } from './mail/mail.module';
       // password: process.env.POSTGRES_PASSWORD,
       autoLoadEntities: true, // Carga automaticamente las entidades
       synchronize: true,  // Realiza las migraciones automaticamente
-      ssl: process.env.POSTGRES_SSL === "true",
-      extra: {
-        ssl: 
-        process.env.POSTGRES_SSL === "true"
-        ? {
-          rejectUnauthorized: false,
-        }
-        : null,
-      }
+      // ssl: process.env.POSTGRES_SSL === "true",
+      // extra: {
+      //   ssl: 
+      //   process.env.POSTGRES_SSL === "true"
+      //   ? {
+      //     rejectUnauthorized: false,
+      //   }
+      //   : null,
+      // }
      }),
     JugadoresModule,
     BancoModule,
