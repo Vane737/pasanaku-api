@@ -120,11 +120,22 @@ export class InvitacionService {
         const invitados = await this.invitacionRepository.find ({
             where: {
                 jugador: { id: id },
+                estado: "Enviada"
             },
-            relations: ['participante','jugador'],
-            select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'],
-          });                  
-        return invitados;
+            relations: ['participante','participante.jugador'],
+            select: ['id','participante'],
+          });            
+
+        const listaInvitaciones = invitados.map(invitacion => ({
+            id: invitacion.id,
+            jugadorNombre: invitacion.participante.jugador.nombre,
+            partidaNombre: invitacion.participante.partida.nombre,
+            partidaPozo: invitacion.participante.partida.pozo,
+            partidaFecha: invitacion.participante.partida.fechaInicio
+        }));
+      
+        console.log(listaInvitaciones[0]);      
+        return listaInvitaciones;
     }
 
 
@@ -147,7 +158,7 @@ export class InvitacionService {
         const participante = await this.participanteService.create(createParticipanteDto);        
         invitacion.estado = 'Aceptada';
         await this.invitacionRepository.save(invitacion);   
-        return invitacion;
+        return 'Aceptada';
     }
 
 
@@ -158,7 +169,7 @@ export class InvitacionService {
         
         invitacion.estado = 'Rechazada';
         await this.invitacionRepository.save(invitacion);   
-        return invitacion;
+        return 'Rechazada';
     }
 
 }
