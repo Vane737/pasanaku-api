@@ -74,7 +74,7 @@ export class InvitacionService {
     async enviar(id: number) {
         const invitado = await this.invitacionRepository.findOne({
             where: { id: id },
-            relations: ['participante', 'participante.jugador'],
+            relations: ['participante', 'participante.jugador','jugador'],
             select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'],
         }); 
 
@@ -93,7 +93,7 @@ export class InvitacionService {
         const nombre = invitado.participante.jugador.nombre;
         const invitacion = invitado;
         const partida = invitado.participante.partida;
-  
+        /*
         const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
         const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
 
@@ -106,12 +106,12 @@ export class InvitacionService {
         }else{
             return 'fail';
         }
-        
+        */
         //push
         if( invitado.jugador != null){
             console.log('Aqqui iria un push..... si tuviera UNO');
         }   
-       return 'success';
+       return invitado;
     }
 
 
@@ -120,11 +120,22 @@ export class InvitacionService {
         const invitados = await this.invitacionRepository.find ({
             where: {
                 jugador: { id: id },
+                estado: "Enviada"
             },
-            relations: ['participante','jugador'],
-            select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'],
-          });                  
-        return invitados;
+            relations: ['participante','participante.jugador'],
+            select: ['id','participante'],
+          });            
+
+        const listaInvitaciones = invitados.map(invitacion => ({
+            id: invitacion.id,
+            jugadorNombre: invitacion.participante.jugador.nombre,
+            partidaNombre: invitacion.participante.partida.nombre,
+            partidaPozo: invitacion.participante.partida.pozo,
+            partidaFecha: invitacion.participante.partida.fechaInicio
+        }));
+      
+        console.log(listaInvitaciones[0]);      
+        return listaInvitaciones;
     }
 
 
@@ -147,7 +158,7 @@ export class InvitacionService {
         const participante = await this.participanteService.create(createParticipanteDto);        
         invitacion.estado = 'Aceptada';
         await this.invitacionRepository.save(invitacion);   
-        return invitacion;
+        return 'Aceptada';
     }
 
 
@@ -158,7 +169,7 @@ export class InvitacionService {
         
         invitacion.estado = 'Rechazada';
         await this.invitacionRepository.save(invitacion);   
-        return invitacion;
+        return 'Rechazada';
     }
 
 }

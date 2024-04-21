@@ -23,7 +23,6 @@ export class JugadoresService {
     ) { }
 
   async create(createJugadorDto: CreateJugadorDto) {
-
     try {
       const { cuentas = [], password, ...jugadorDetails } = createJugadorDto;
       const jugador = this.jugadorRepository.create({ 
@@ -38,7 +37,7 @@ export class JugadoresService {
       const invitaciones = await this.invitacionRepository.find({
         where: {
             telefono: jugador.telefono,
-            estado: In(['Espera', 'Enviada'])
+            estado: 'Enviada'
         },
         relations: [],
         select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'], 
@@ -51,9 +50,8 @@ export class JugadoresService {
             await this.invitacionRepository.save(invitado);      
         }
       }
-
       return { ...jugador, cuentas };
-
+      
     } catch (error) {      
       console.log(error);
       this.handleExceptions( error ); 
@@ -154,7 +152,7 @@ export class JugadoresService {
     const { password, email } = loginJugadorDto;
     const jugador = await this.jugadorRepository.findOne({ 
       where: { email }, 
-      select: { email: true, password: true, id :true, tokenMovil: true }
+      select: { email: true, password: true, id :true, tokenMovil: true, nombre:true}
     });
 
     console.log('Este es el jugador encontrado', jugador);
