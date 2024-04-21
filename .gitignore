@@ -39,4 +39,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Excluir claves sensibles
-/scr/notification/key/firebase-key.json
+/src/notification/key/firebase-key.json
