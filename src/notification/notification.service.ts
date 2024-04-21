@@ -6,6 +6,7 @@ import * as admin from 'firebase-admin';
 import { Repository } from 'typeorm';
 import { Invitacion } from 'src/invitacion/entities/invitacion.entity';
 import { Partida } from 'src/partida/entities/partida.entity';
+import { Jugador } from 'src/jugadores/entities/jugador.entity';
 
 import { SendWhatsAppDto } from './dto/sendWhatsAppDto.dto';
 import { join } from 'path';
@@ -15,9 +16,13 @@ export class NotificationService {
     private readonly client: Twilio;
     constructor(
         @InjectRepository( Invitacion ) private readonly invitacionRepository: Repository<Invitacion>, 
+        @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>, 
     ) {       
-      const jsonFilePath = join(__dirname, 'key', 'firebase-key.json');
-      
+      const serviceAccount = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+
       const accountSid = process.env.TWI_SID;
       const authToken = process.env.TWI_AUT;
         this.client = require('twilio')(accountSid, authToken);
@@ -49,7 +54,40 @@ export class NotificationService {
 
 
 
+      async sendPushNotification (id: number): Promise<any> {
+        const jugador = await this.jugadorRepository.findOne({
+          where: { id: id }
+        });        
+        const message = {
+          notification: {
+            title: "Nueva oferta",
+            body: "Hay una nueva oferta disponible, toca para verla.",
+          },          
+          token: jugador.tokenMovil,
+        };    
+        try {
+          const response = await admin.messaging().send(message);
+          console.log('Successfully sent message:', response);
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
+      }
 
+      async sendPushNotificationInvitacion (token: string, title: string, body : string): Promise<any> { 
+        const message = {
+          notification: {
+            title: title,
+            body: body,
+          },          
+          token: token,
+        };    
+        try {
+          const response = await admin.messaging().send(message);
+          console.log('Successfully sent message:', response);
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
+      }
 
       /*
       //Prueba Twillio
