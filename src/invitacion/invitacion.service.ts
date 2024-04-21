@@ -74,7 +74,7 @@ export class InvitacionService {
     async enviar(id: number) {
         const invitado = await this.invitacionRepository.findOne({
             where: { id: id },
-            relations: ['participante', 'participante.jugador'],
+            relations: ['participante', 'participante.jugador','jugador'],
             select: ['id', 'nombre', 'telefono', 'email', 'estado', 'partidaId'],
         }); 
 
@@ -93,7 +93,7 @@ export class InvitacionService {
         const nombre = invitado.participante.jugador.nombre;
         const invitacion = invitado;
         const partida = invitado.participante.partida;
-  
+        /*
         const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
         const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
 
@@ -106,12 +106,12 @@ export class InvitacionService {
         }else{
             return 'fail';
         }
-        
+        */
         //push
         if( invitado.jugador != null){
             console.log('Aqqui iria un push..... si tuviera UNO');
         }   
-       return 'success';
+       return invitado;
     }
 
 

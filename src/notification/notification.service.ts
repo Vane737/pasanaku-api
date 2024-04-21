@@ -1,23 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Twilio } from 'twilio';
+import * as admin from 'firebase-admin';
 
 import { Repository } from 'typeorm';
 import { Invitacion } from 'src/invitacion/entities/invitacion.entity';
 import { Partida } from 'src/partida/entities/partida.entity';
 
 import { SendWhatsAppDto } from './dto/sendWhatsAppDto.dto';
+import { join } from 'path';
 
 @Injectable()
 export class NotificationService {
     private readonly client: Twilio;
     constructor(
         @InjectRepository( Invitacion ) private readonly invitacionRepository: Repository<Invitacion>, 
-    ) {        
+    ) {       
+      const jsonFilePath = join(__dirname, 'key', 'firebase-key.json');
+      
       const accountSid = process.env.TWI_SID;
       const authToken = process.env.TWI_AUT;
         this.client = require('twilio')(accountSid, authToken);
       }
+      
+
       
       async sendWhatsAppMessage(nombre: string,invitacion: Invitacion,partida: Partida): Promise<any> {
         try {
@@ -40,6 +46,10 @@ export class NotificationService {
             throw error;
           }
       }
+
+
+
+
 
       /*
       //Prueba Twillio

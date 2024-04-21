@@ -23,7 +23,6 @@ export class JugadoresService {
     ) { }
 
   async create(createJugadorDto: CreateJugadorDto) {
-
     try {
       const { cuentas = [], password, ...jugadorDetails } = createJugadorDto;
       const jugador = this.jugadorRepository.create({ 
@@ -51,9 +50,8 @@ export class JugadoresService {
             await this.invitacionRepository.save(invitado);      
         }
       }
-
       return { ...jugador, cuentas };
-
+      
     } catch (error) {      
       console.log(error);
       this.handleExceptions( error ); 
