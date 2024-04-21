@@ -7,6 +7,14 @@ import { NotificationService } from './notification.service';
 export class NotificationController {
     constructor(private readonly notificationService: NotificationService) {}
 
+  
+  
+  @Post('send/:id')
+  async sendPushNotification(@Param('id') id: number) {
+        // Enviar firebasepush
+    return this.notificationService.sendPushNotification(id);
+  }
+    
   /*
   @Post('send/:id')
   async sendWhatsAppMessage(@Param('id') id: number) {

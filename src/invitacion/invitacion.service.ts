@@ -24,6 +24,7 @@ export class InvitacionService {
         private readonly notificationService: NotificationService,
         private readonly mailService: MailService,
         private readonly participanteService: ParticipanteService,
+        
     ) { }
 
     async create(createInvitacionDto: CreateInvitacionDto): Promise<Invitacion> {
@@ -109,7 +110,10 @@ export class InvitacionService {
         */
         //push
         if( invitado.jugador != null){
-            console.log('Aqqui iria un push..... si tuviera UNO');
+            var title = "Nueva invitacion";
+            var body = "As sido invitado a una nueva partida"
+            await this.notificationService.sendPushNotificationInvitacion(invitado.jugador.tokenMovil,title,body)
+
         }   
        return invitado;
     }
