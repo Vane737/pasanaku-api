@@ -60,6 +60,7 @@ export class PartidaService {
         if ( !partida ) {
           throw new NotFoundException(`La partida con el id ${ id } no fue encontrado.`)
         }
+        partida.rondasEnpartida.sort((a, b) => a.id - b.id);
         console.log(partida);
         return partida;
     }
@@ -95,4 +96,9 @@ export class PartidaService {
         return await this.findOne(partida.id);
     }
     
+    hora() {
+        const ahora = new Date();
+        console.log('hola ' + ahora);
+        return ahora;
+    }
 }
