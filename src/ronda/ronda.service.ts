@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { addWeeks } from 'date-fns';
 import { addMonths } from 'date-fns/addMonths';
 import { scheduleJob } from 'node-schedule';
-import { fromZonedTime   } from 'date-fns-tz';
+import { fromZonedTime, toZonedTime   } from 'date-fns-tz';
 
 
 import { LessThan, Repository } from 'typeorm';
@@ -17,7 +17,6 @@ import { SubastaService } from 'src/subasta/subasta.service';
 export class RondaService {
 
     constructor(
-        @InjectRepository( Partida ) private readonly partidaRepository: Repository<Partida>,
         @InjectRepository( Ronda ) private readonly rondaRepository: Repository<Ronda>,
         private readonly subastaService: SubastaService,
     ) {}
@@ -92,5 +91,19 @@ export class RondaService {
   
         console.log('Subasta programada para iniciar el '+ fechaInicioSubasta);
       }
-  }
+    }
+
+    //Devuelve la ronda
+    async findOne(id: number) {
+      const ronda = await this.rondaRepository.findOne({
+          relations: ['subasta'],
+          where: { id: id },
+        });
+      if ( !ronda ) {
+        throw new NotFoundException(`La ronda con el id ${ id } no fue encontrado.`)
+      }
+      //ronda.fechaInicio = ronda.fechaInicio.toLocaleString();
+      return ronda;
+    }
+
 }

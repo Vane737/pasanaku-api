@@ -20,7 +20,7 @@ export class Ronda {
     @Column({ type: 'enum', enum: ['Espera', 'Iniciada', 'Finalizada'] })
     estado: 'Espera' | 'Iniciada' | 'Finalizada';
 
-    @ManyToOne(() => Partida, partida => partida.rondasEnpartida, { eager: true })
+    @ManyToOne(() => Partida, partida => partida.rondasEnpartida)
     partida: Partida;
     
     @OneToOne(() => Subasta, subasta => subasta.ronda)

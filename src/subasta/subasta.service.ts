@@ -61,4 +61,16 @@ export class SubastaService {
         console.log("Subasta finalizada");
     }
 
+    //Devuelve la subasta
+    async findOne(id: number) {
+        const subasta = await this.subastaRepository.findOne({
+            relations: ['ofertasDeSubasta'],
+            where: { id: id },
+          });
+        if ( !subasta ) {
+          throw new NotFoundException(`La ronda con el id ${ id } no fue encontrado.`)
+        }
+        //ronda.fechaInicio = ronda.fechaInicio.toLocaleString();
+        return subasta;
+    }
 }
