@@ -30,8 +30,9 @@ export class CreatePartidaDto {
     @IsInt()
     coutaInicial: number;
 
+    @IsString()
     @IsNotEmpty()
-    fechaInicio: Date;
+    fechaInicio: string;
 
     @IsEnum(LapsoPartida)
     lapso: 'Semanal' | 'Bisemanal' | 'Mensual';

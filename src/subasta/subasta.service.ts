@@ -41,12 +41,14 @@ export class SubastaService {
         console.log("Subasta Iniciada");
 
         const fechaFinal = new Date(subasta.fechaFinal);
-        console.log(fechaFinal);
+        //console.log('final' + fechaFinal);
+
         scheduleJob(fechaFinal, () => {
           this.finalizarSubasta(subasta.id);
         });
     }
 
+    
     async finalizarSubasta(id: number) {
         const subasta = await this.subastaRepository.findOne({
             where: { id: id },
@@ -55,7 +57,8 @@ export class SubastaService {
             throw new NotFoundException(`La partida con el id ${ id } no fue encontrado.`)
         }  
         subasta.estado = 'Finalizada';
-        await this.subastaRepository.save(subasta);
+        await this.subastaRepository.save(subasta);        
         console.log("Subasta finalizada");
     }
+
 }
