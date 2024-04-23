@@ -44,8 +44,6 @@ export class ParticipanteService {
             rol,
             ...rest,
           });
-
-        console.log(participante);
         jugador.participantesDeJugador.push(participante);  
           
         return await this.participanteRepository.save(participante);        

@@ -7,7 +7,7 @@ import { Partida } from './entities/partida.entity';
 
 import { CreatePartidaDto } from './dto/create-partida.dto';
 import { RondaService } from 'src/ronda/ronda.service';
-import { fromZonedTime   } from 'date-fns-tz';
+import { fromZonedTime, toZonedTime   } from 'date-fns-tz';
 
 @Injectable()
 export class PartidaService {
@@ -26,16 +26,21 @@ export class PartidaService {
 
 
     async create(createPartidaDto: CreatePartidaDto): Promise<Partida> {
-        console.log("hola");
         const moneda = await this.monedaRepository.findOneBy({ id: createPartidaDto.monedaId });
         if (!moneda) {
             throw new NotFoundException('La moneda especificada no existe');
         }
-
         createPartidaDto.pozo = createPartidaDto.participantes * createPartidaDto.coutaInicial;
+        
+        const fechaInicioDate = new Date(createPartidaDto.fechaInicio);
+        console.log(fechaInicioDate);
+        const zonaUTC = 'Etc/UTC'; // UTC+0
+        const fechaEnUTC = toZonedTime(fechaInicioDate, zonaUTC);
+        console.log(fechaEnUTC);
 
         const partida = this.partidaRepository.create({ 
          ...createPartidaDto,      
+        fechaInicio: fechaEnUTC,
         moneda
         });
         return await this.partidaRepository.save(partida);
@@ -48,7 +53,10 @@ export class PartidaService {
     
     
     async findOne(id: number) {
-        const partida = await this.partidaRepository.findOneBy({ id });
+        const partida = await this.partidaRepository.findOne({
+            relations: ['rondasEnpartida'],
+            where: { id: id },
+          });
         if ( !partida ) {
           throw new NotFoundException(`La partida con el id ${ id } no fue encontrado.`)
         }
@@ -80,10 +88,10 @@ export class PartidaService {
         partida.pozo = (partida.participantes * partida.coutaInicial);
         partida.fechaInicio = ahora;
         partida.estado = 'Iniciada';
+
         await this.partidaRepository.save(partida);
 
         await this.rondaService.create(partida);
-
         return partida
     }
     

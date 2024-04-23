@@ -59,6 +59,7 @@ export class RondaService {
         }
     }
 
+
     async iniciarRonda(id: number) {
       const ronda = await this.rondaRepository.findOne({
           relations: ['subasta'],
@@ -83,16 +84,13 @@ export class RondaService {
       await this.rondaRepository.save(ronda);
 
       if (ronda.subasta && ronda.subasta.fechaInicio) {
-        console.log(ronda.subasta.fechaInicio);
         var fechaInicioSubasta = new Date(ronda.subasta.fechaInicio);
-        fechaInicioSubasta =  fromZonedTime(fechaInicioSubasta, 'America/La_Paz')
-        console.log(fechaInicioSubasta);
-
+        //fechaInicioSubasta =  fromZonedTime(fechaInicioSubasta, 'America/La_Paz')
         scheduleJob(fechaInicioSubasta, () => {
           this.subastaService.iniciarSubasta(ronda.subasta.id);
         });
   
-        console.log(`Subasta programada para iniciar el ${fechaInicioSubasta.toISOString()}.`);
+        console.log('Subasta programada para iniciar el '+ fechaInicioSubasta);
       }
   }
 }
