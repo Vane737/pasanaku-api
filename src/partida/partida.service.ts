@@ -90,9 +90,9 @@ export class PartidaService {
         partida.estado = 'Iniciada';
 
         await this.partidaRepository.save(partida);
-
         await this.rondaService.create(partida);
-        return partida
+
+        return await this.findOne(partida.id);
     }
     
 }
