@@ -17,6 +17,9 @@ import { CustomExceptionFilter } from './filters/custom-exception.filter';
 import { NotificationModule } from './notification/notification.module';
 import { InvitacionModule } from './invitacion/invitacion.module';
 import { MailModule } from './mail/mail.module';
+import { RondaModule } from './ronda/ronda.module';
+import { SubastaModule } from './subasta/subasta.module';
+import { OfertaModule } from './oferta/oferta.module';
 
 
 @Module({
@@ -59,6 +62,9 @@ import { MailModule } from './mail/mail.module';
     NotificationModule,
     InvitacionModule,
     MailModule,
+    RondaModule,
+    SubastaModule,
+    OfertaModule,
   ],
   controllers: [],
   providers: [

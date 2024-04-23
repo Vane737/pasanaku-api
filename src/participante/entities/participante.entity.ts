@@ -6,6 +6,7 @@ import { Jugador } from "src/jugadores/entities/jugador.entity";
 import { Partida } from "src/partida/entities/partida.entity";
 import { Role } from "src/roles/entities/role.entity";
 import { Invitacion } from "src/invitacion/entities/invitacion.entity";
+import { Oferta } from "src/oferta/entities/oferta.entity";
 
 @Entity()
 export class Participante {
@@ -37,4 +38,7 @@ export class Participante {
 
     @OneToMany(() => Invitacion, invitacion => invitacion.participante)
     invitacionesDeParticipante: Invitacion[];
+
+    @OneToMany(() => Oferta, oferta => oferta.participante)
+    ofertasDeParticipante: Oferta[];
 }

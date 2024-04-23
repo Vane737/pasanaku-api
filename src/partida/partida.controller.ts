@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { InvitacionService } from 'src/invitacion/invitacion.service';
 import { CreateParticipanteDto } from 'src/participante/dto/create-participante.dto';
 import { ParticipanteService } from 'src/participante/participante.service';
@@ -80,5 +80,11 @@ export class PartidaController {
       message: 'Lista de participantes de la partida conseguida exitosamente',
       data: participantes,
      };
+  }
+
+  //Inicia partida
+  @Put('iniciar/:id')
+  async iniciarPartida(@Param('id') id: number) {
+    return await this.partidaService.iniciarPartida(id);
   }
 }

@@ -24,14 +24,11 @@ export class CreatePartidaDto {
     pozo?: number;
 
     @IsInt()
-    @IsOptional()
     @Min(0)
-    participantes?: number;
+    participantes: number;
 
     @IsInt()
-    @IsOptional()
-    @Min(0)
-    cuotaInicial?: number;
+    coutaInicial: number;
 
     @IsNotEmpty()
     fechaInicio: Date;

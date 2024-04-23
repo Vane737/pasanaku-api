@@ -18,11 +18,10 @@ export class NotificationService {
         @InjectRepository( Invitacion ) private readonly invitacionRepository: Repository<Invitacion>, 
         @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>, 
     ) {       
-      const serviceAccount = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-      admin.initializeApp({
+      const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+      /*admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-      });
-
+      });*/
       const accountSid = process.env.TWI_SID;
       const authToken = process.env.TWI_AUT;
         this.client = require('twilio')(accountSid, authToken);
