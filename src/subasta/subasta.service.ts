@@ -3,6 +3,7 @@ import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { addMinutes } from 'date-fns/addMinutes';
 import { scheduleJob } from 'node-schedule';
+import { Oferta } from 'src/oferta/entities/oferta.entity';
 import { Ronda } from 'src/ronda/entities/ronda.entity';
 import { Repository } from 'typeorm';
 import { Subasta } from './entities/subasta.entity';
@@ -12,6 +13,8 @@ export class SubastaService {
     constructor(
         @InjectRepository( Ronda ) private readonly rondaRepository: Repository<Ronda>,
         @InjectRepository( Subasta ) private readonly subastaRepository: Repository<Subasta>,
+        @InjectRepository( Oferta ) private readonly ofertaRepository: Repository<Oferta>,
+
     ) {}
 
     async create(ronda: Ronda){
@@ -51,12 +54,27 @@ export class SubastaService {
     
     async finalizarSubasta(id: number) {
         const subasta = await this.subastaRepository.findOne({
+            relations: ['ofertasDeSubasta'],
             where: { id: id },
         }); 
         if ( !subasta ) {
             throw new NotFoundException(`La partida con el id ${ id } no fue encontrado.`)
         }  
         subasta.estado = 'Finalizada';
+        if (subasta.ofertasDeSubasta.length == 0) {
+            console.log("La subasta no tiene ofertas.");
+
+        } else {
+            const ofertaConMayorPuja = subasta.ofertasDeSubasta.reduce((max, oferta) => {
+                return oferta.puja > max.puja ? oferta : max;
+            });
+    
+            console.log(`La oferta con la mayor puja es ${ofertaConMayorPuja.puja}, hecha por el participante con ID ${ofertaConMayorPuja.participante.id}.`);
+        }
+
+
+
+
         await this.subastaRepository.save(subasta);        
         console.log("Subasta finalizada");
     }
@@ -64,12 +82,51 @@ export class SubastaService {
     //Devuelve la subasta
     async findOne(id: number) {
         const subasta = await this.subastaRepository.findOne({
-            relations: ['ofertasDeSubasta'],
+            relations: ['ofertasDeSubasta','ronda.partida.participantesEnPartida.jugador'],
             where: { id: id },
           });
         if ( !subasta ) {
           throw new NotFoundException(`La ronda con el id ${ id } no fue encontrado.`)
         }
+        subasta.estado = 'Finalizada';
+        let participanteId;
+        
+        if (subasta.ofertasDeSubasta.length == 0) {
+            console.log("La subasta no tiene ofertas.");
+            const opciones = subasta.ronda.partida.participantesEnPartida;
+            let elegido;
+            for (const opcion of opciones) {
+                if (opcion.recibido == false) {
+                    elegido = opcion;
+                    break;
+                }
+            }
+            subasta.jugadorId = elegido.jugador.id; 
+            subasta.ganador = elegido.jugador.nombre; 
+            subasta.resultado = 0;
+            participanteId = elegido.id;
+        } else {
+            console.log("La subasta tiene ofertas.");
+            const ofertas = subasta.ofertasDeSubasta;
+            let ofertaConMayorPuja = ofertas[0];
+            for (const oferta of ofertas) {
+                if (oferta.puja > ofertaConMayorPuja.puja) {
+                    ofertaConMayorPuja = oferta;
+                }
+            }
+            console.log(ofertaConMayorPuja);    
+            const oferta = await this.ofertaRepository.findOne({
+                relations: ['participante','participante.jugador'],
+                where: { id: ofertaConMayorPuja.id },
+              });
+
+            subasta.jugadorId = oferta.participante.jugador.id; 
+            subasta.ganador = oferta.participante.jugador.nombre; 
+            subasta.resultado = oferta.puja;
+            participanteId = oferta.participante.id;  
+        }
+        
+        await this.subastaRepository.save(subasta); 
         //ronda.fechaInicio = ronda.fechaInicio.toLocaleString();
         return subasta;
     }

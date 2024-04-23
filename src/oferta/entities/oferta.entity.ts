@@ -15,7 +15,7 @@ export class Oferta {
     @Column({ type: 'timestamp' })
     fecha: Date;
     
-    @ManyToOne(() => Subasta, subasta => subasta.ofertasDeSubasta, { eager: true })
+    @ManyToOne(() => Subasta, subasta => subasta.ofertasDeSubasta)
     subasta: Subasta;
 
     @ManyToOne(() => Participante, participante => participante.ofertasDeParticipante)

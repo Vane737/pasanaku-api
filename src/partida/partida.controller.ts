@@ -87,4 +87,9 @@ export class PartidaController {
   async iniciarPartida(@Param('id') id: number) {
     return await this.partidaService.iniciarPartida(id);
   }
+
+  @Post('hora')
+  hora(){
+    return this.partidaService.hora();
+  }
 }
