@@ -12,7 +12,7 @@ export class NotificationController {
   @Post('send/:id')
   async sendPushNotification(@Param('id') id: number) {
         // Enviar firebasepush
-    return this.notificationService.sendPushNotification(id);
+    return this.notificationService.sendPushNotificationPrueba(id);
   }
     
   /*

@@ -190,4 +190,20 @@ export class JugadoresService {
 
     throw new InternalServerErrorException('Error al conectar al servidor')
   }
+
+  async tokens(id: number) {
+    const jugadores = await this.jugadorRepository.find({ 
+      where: {
+        participantesDeJugador: { partida: { id: id } },
+      },
+      select: ['tokenMovil'],
+    });
+    var tokens: string[] = [];
+    for (const jugador of jugadores) {
+      if(jugador.tokenMovil != null){
+        tokens.push(jugador.tokenMovil);
+      }
+    }
+    return tokens;
+  }
 }

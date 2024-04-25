@@ -14,7 +14,10 @@ export class RondaController {
     return this.rondaService.findOne( id );
     }
 
-
+    @Put('iniciar/:id')
+    iniciarRonda(@Param('id') id: number) {
+    return this.rondaService.iniciarRonda( id );
+    }
     
     
 }

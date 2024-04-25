@@ -95,10 +95,10 @@ export class InvitacionService {
         const invitacion = invitado;
         const partida = invitado.participante.partida;
         
-        //const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
-        //const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
+        const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
+        const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
 
-        /*
+        
         console.log(send1);
         console.log(send2);
 
@@ -108,13 +108,12 @@ export class InvitacionService {
         }else{
             return 'fail';
         }
-        */
+        
         //push
         if( invitado.jugador != null){
             var title = "Nueva invitacion";
             var body = "As sido invitado a una nueva partida"
-            await this.notificationService.sendPushNotificationInvitacion(invitado.jugador.tokenMovil,title,body)
-
+            await this.notificationService.sendPushNotificationInvitacion(invitado.jugador.tokenMovil,title,body);
         }
            
        return invitado;

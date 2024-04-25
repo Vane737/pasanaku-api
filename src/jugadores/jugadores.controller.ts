@@ -87,5 +87,9 @@ export class JugadoresController {
      };
   }
   
-  
+  @Get('tokens/:id')
+  async tokens(@Param('id') id: number) {
+      const tokens = await this.jugadoresService.tokens(id);
+      return tokens;
+  }
 }
