@@ -12,7 +12,10 @@ export class OfertaController {
       @Post()
       async create(@Body() createOfertaDto: CreateOfertaDto) {
         const oferta = await this.ofertaService.create(createOfertaDto);        
-        return oferta;        
+        return {
+          status: 200,
+          message: oferta,
+         };       
       }
 
       

@@ -63,7 +63,8 @@ export class OfertaService {
                 subasta: subasta,
                 participante: participante,
             });
-            return await this.ofertaRepository.save(oferta);
+            await this.ofertaRepository.save(oferta);
+            return 'La oferta fue realiza exitosamente'
         }  
 
         return "Ya as realizado una puja en esta subasta";                
