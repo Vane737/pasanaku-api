@@ -24,12 +24,18 @@ export class JugadoresService {
 
   async create(createJugadorDto: CreateJugadorDto) {
     try {
-      const { cuentas = [], password, ...jugadorDetails } = createJugadorDto;
+      const { cuentas = [], password, tokenMovil, ...jugadorDetails } = createJugadorDto;
+
       const jugador = this.jugadorRepository.create({ 
         ...jugadorDetails,
         password: bcrypt.hashSync( password, 10 ),
         cuentas: cuentas.map( cuenta => this.cuentaRepository.create({ nro: cuenta.nro, departamento: cuenta.departamento }) ) 
       });
+
+      if(tokenMovil != undefined && tokenMovil != null) {
+        jugador.tokenMovil = tokenMovil;
+        await this.jugadorRepository.save(jugador);
+      }
       await this.jugadorRepository.save( jugador );
       delete jugador.password;
 
@@ -148,7 +154,6 @@ export class JugadoresService {
   }
 
   async login( loginJugadorDto: LoginJugadorDto ) {
-
     const { password, email } = loginJugadorDto;
     const jugador = await this.jugadorRepository.findOne({ 
       where: { email }, 
