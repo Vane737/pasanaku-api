@@ -10,7 +10,7 @@ import { NotificationService } from 'src/notification/notification.service';
 import { MailService } from 'src/mail/mail.service';
 import { CreateParticipanteDto } from 'src/participante/dto/create-participante.dto';
 import { ParticipanteService } from 'src/participante/participante.service';
-
+import * as path from 'path';
 
 
 @Injectable()
@@ -90,14 +90,15 @@ export class InvitacionService {
                 console.log("Jugador asignado")
             }
         }
-
+        
         const nombre = invitado.participante.jugador.nombre;
         const invitacion = invitado;
         const partida = invitado.participante.partida;
-        /*
-        const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
-        const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
+        
+        //const send1 = await this.notificationService.sendWhatsAppMessage(nombre,invitacion,partida);
+        //const send2 = await this.mailService.sendInviteMail(nombre,invitacion,partida);
 
+        /*
         console.log(send1);
         console.log(send2);
 
@@ -114,7 +115,8 @@ export class InvitacionService {
             var body = "As sido invitado a una nueva partida"
             await this.notificationService.sendPushNotificationInvitacion(invitado.jugador.tokenMovil,title,body)
 
-        }   
+        }
+           
        return invitado;
     }
 

@@ -8,7 +8,7 @@
         /* Estilos para el banner */
         .banner {
             background-color: #FDE047;
-            height: 150px;
+            height: 100px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -16,7 +16,7 @@
 
         /* Estilos para la imagen */
         .banner img {
-            height: 40px;
+            height: 100px;
             margin-left: 20px; /* Ajusta el margen según lo necesites */
         }
 
@@ -30,14 +30,23 @@
         .content {
             margin-top: 20px; /* Ajusta el margen según lo necesites */
         }
+
+        .final-image {
+            margin-top: 20px; /* Margen superior para separar */
+            text-align: center; /* Centra la imagen */
+        }
+
+        .final-image img {
+            max-height: 200px; /* Tamaño máximo de la imagen */
+            max-width: 100%; /* Se ajusta al ancho máximo */
+        }
     </style>
 </head>
 <body>
     <!-- Banner amarillo con imagen y texto -->
     <div class="banner">
-
+        <img src="cid:unique-logo-id" alt="Logo"> <!-- Usa Content-ID para referenciar la imagen -->
     </div>
-
     <!-- Contenido principal de la invitación -->
     <div class="content">
         <h2>¡Invitación al {{ event }}!</h2>
@@ -51,6 +60,10 @@
         <li><strong>Monto:</strong> {{ monto }}</li>
         <li><strong>Participantes:</strong> {{ cant }}</li>
         </ul>
+    </div>
+    <!-- Sección para la imagen final -->
+    <div class="final-image">
+        <img src="https://i.ibb.co/1R2Cn8h/qr.png" alt="Imagen descriptiva">
     </div>
 </body>
 </html>
