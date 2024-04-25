@@ -163,4 +163,9 @@ export class SubastaService {
         */
         return subasta;
     }
+    /*
+    findAll() {
+        return this.subastaRepository.find({});
+    }
+    */
 }

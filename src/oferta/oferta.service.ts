@@ -40,24 +40,35 @@ export class OfertaService {
         const participante = await this.participanteRepository.findOne({
             relations: ['jugador'],
             where: {
-                partida: { id: subasta.ronda.partida.id },
+                partida: { id: subasta.ronda.partida.id  },
                 jugador: { id: jugadorId },
             },
           });
         if ( !participante ) {
-            throw new NotFoundException(`La subasta no fue encontrada.`)
+            throw new NotFoundException(`El participante no fue encontrada.`)
         }  
 
-        const ahora = new Date();
-        const oferta = this.ofertaRepository.create({
-            ...rest,
-            fecha: ahora,
-            subasta: subasta,
-            participante: participante,
+        const ofertaRepetida = await this.ofertaRepository.findOne({
+            where: {
+                subasta: { id: subastaId },
+                participante: { id: participante.id },
+            },
           });
-          
-        return await this.ofertaRepository.save(oferta);
+
+        if ( !ofertaRepetida ) {
+            const ahora = new Date();
+            const oferta = this.ofertaRepository.create({
+                ...rest,
+                fecha: ahora,
+                subasta: subasta,
+                participante: participante,
+            });
+            return await this.ofertaRepository.save(oferta);
+        }  
+
+        return "Ya as realizado una puja en esta subasta";                
 
     }
 
+        
 }

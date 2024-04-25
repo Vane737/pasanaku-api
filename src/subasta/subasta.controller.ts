@@ -7,9 +7,19 @@ export class SubastaController {
         private readonly subastaService: SubastaService,
     ) {}
 
+    
+
     //Devuelve la subasta
     @Get(':id')
     findOne(@Param('id') id: number) {
     return this.subastaService.findOne( id );
     }
+
+
+    /*
+    @Get()
+      findAll(){
+        return this.subastaService.findAll();
+      }
+    */
 }
