@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { NotificationService } from 'src/notification/notification.service';
+import { RondaService } from 'src/ronda/ronda.service';
 
 import { Moneda } from 'src/moneda/entities/moneda.entity';
 import { Partida } from './entities/partida.entity';
 
 import { CreatePartidaDto } from './dto/create-partida.dto';
-import { RondaService } from 'src/ronda/ronda.service';
 import { fromZonedTime, toZonedTime   } from 'date-fns-tz';
 
 @Injectable()
@@ -22,6 +23,7 @@ export class PartidaService {
         private readonly monedaRepository: Repository<Moneda>, 
 
         private readonly rondaService: RondaService,
+        private readonly notificationService: NotificationService,
         ) { }
 
 
@@ -61,7 +63,7 @@ export class PartidaService {
           throw new NotFoundException(`La partida con el id ${ id } no fue encontrado.`)
         }
         partida.rondasEnpartida.sort((a, b) => a.id - b.id);
-        console.log(partida);
+        //console.log(partida);
         return partida;
     }
 
@@ -90,7 +92,14 @@ export class PartidaService {
         partida.fechaInicio = ahora;
         partida.estado = 'Iniciada';
 
+
         await this.partidaRepository.save(partida);
+
+        
+        var title = "Partida Inciada";
+        const body = `La partida ${partida.nombre} ha comenzado.\n La subasta empieza en 3 minutos`;
+        this.notificationService.sendPushNotification(partida.id,title,body);
+
         await this.rondaService.create(partida);
 
         return await this.findOne(partida.id);

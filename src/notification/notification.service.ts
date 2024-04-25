@@ -4,6 +4,7 @@ import { Twilio } from 'twilio';
 import * as admin from 'firebase-admin';
 
 import { Repository } from 'typeorm';
+import { JugadoresService } from 'src/jugadores/jugadores.service';
 import { Invitacion } from 'src/invitacion/entities/invitacion.entity';
 import { Partida } from 'src/partida/entities/partida.entity';
 import { Jugador } from 'src/jugadores/entities/jugador.entity';
@@ -17,11 +18,12 @@ export class NotificationService {
     constructor(
         @InjectRepository( Invitacion ) private readonly invitacionRepository: Repository<Invitacion>, 
         @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>, 
+        private readonly jugadoresService: JugadoresService,
     ) {       
       const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
-      /*admin.initializeApp({
+      admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-      });*/
+      });
       const accountSid = process.env.TWI_SID;
       const authToken = process.env.TWI_AUT;
         this.client = require('twilio')(accountSid, authToken);
@@ -51,9 +53,7 @@ export class NotificationService {
           }
       }
 
-
-
-      async sendPushNotification (id: number): Promise<any> {
+      async sendPushNotificationPrueba (id: number): Promise<any> {
         const jugador = await this.jugadorRepository.findOne({
           where: { id: id }
         });        
@@ -72,6 +72,7 @@ export class NotificationService {
         }
       }
 
+
       async sendPushNotificationInvitacion (token: string, title: string, body : string): Promise<any> { 
         const message = {
           notification: {
@@ -82,6 +83,25 @@ export class NotificationService {
         };    
         try {
           const response = await admin.messaging().send(message);
+          console.log('Successfully sent message:', response);
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
+      }
+
+      async sendPushNotification (id: number, title: string, body : string): Promise<any> { 
+        
+        var tokens: string[] = await this.jugadoresService.tokens(id);
+        
+        const message = {
+          notification: {
+            title: title,
+            body: body,
+          },          
+          tokens: tokens,
+        };    
+        try {
+          const response = await admin.messaging().sendMulticast(message);
           console.log('Successfully sent message:', response);
         } catch (error) {
           console.error('Error sending message:', error);

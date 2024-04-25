@@ -3,6 +3,7 @@ import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { addMinutes } from 'date-fns/addMinutes';
 import { scheduleJob } from 'node-schedule';
+import { NotificationService } from 'src/notification/notification.service';
 import { Oferta } from 'src/oferta/entities/oferta.entity';
 import { Ronda } from 'src/ronda/entities/ronda.entity';
 import { Repository } from 'typeorm';
@@ -14,7 +15,7 @@ export class SubastaService {
         @InjectRepository( Ronda ) private readonly rondaRepository: Repository<Ronda>,
         @InjectRepository( Subasta ) private readonly subastaRepository: Repository<Subasta>,
         @InjectRepository( Oferta ) private readonly ofertaRepository: Repository<Oferta>,
-
+        private readonly notificationService: NotificationService,
     ) {}
 
     async create(ronda: Ronda){
@@ -33,6 +34,7 @@ export class SubastaService {
 
     async iniciarSubasta(id: number) {
         const subasta = await this.subastaRepository.findOne({
+            relations: ['ronda','ronda.partida'],
             where: { id: id },
         }); 
         if ( !subasta ) {
@@ -45,10 +47,17 @@ export class SubastaService {
 
         const fechaFinal = new Date(subasta.fechaFinal);
         //console.log('final' + fechaFinal);
-
-        scheduleJob(fechaFinal, () => {
+        const jobName = `F subasta-${subasta.id}`
+        scheduleJob(jobName,fechaFinal, () => {
           this.finalizarSubasta(subasta.id);
         });
+        console.log('Subasta programada para finalizar el '+ fechaFinal);
+
+        var title = "Subasta Inciada";
+        const body = `Subasta de la ${subasta.ronda.partida.nombre} ${subasta.ronda.nombre} ha comenzado.`;
+        console.log(body);
+        this.notificationService.sendPushNotification(subasta.ronda.partida.id,title,body);
+
     }
 
     
@@ -60,6 +69,7 @@ export class SubastaService {
         if ( !subasta ) {
           throw new NotFoundException(`La ronda con el id ${ id } no fue encontrado.`)
         }
+        
         subasta.estado = 'Finalizada';
         let participanteId;
         
@@ -98,6 +108,11 @@ export class SubastaService {
             participanteId = oferta.participante.id;  
         }
         
+        var title = "Subasta Finalizada";
+        const body = `El ganador es ${subasta.ganador} con ${subasta.resultado}.`;
+        console.log(body);
+        this.notificationService.sendPushNotification(subasta.ronda.partida.id,title,body);
+        console.log(subasta);
         await this.subastaRepository.save(subasta);       
         console.log("Subasta finalizada");
     }
