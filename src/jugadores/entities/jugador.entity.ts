@@ -36,6 +36,9 @@ export class Jugador {
 
     @Column({ nullable: true })
     tokenMovil: string | null
+
+    @Column({ nullable: true })
+    imagen: string | null
     
     @OneToMany( 
         () => Cuenta,

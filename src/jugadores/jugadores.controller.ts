@@ -1,8 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException } from '@nestjs/common';
 import { JugadoresService } from './jugadores.service';
 import { CreateJugadorDto } from './dto/create-jugador.dto';
 import { UpdateJugadorDto } from './dto/update-jugador.dto';
 import { LoginJugadorDto } from './dto/login-jugador.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+//import { Request } from 'express';
+import { UploadedFile, UseInterceptors } from '@nestjs/common/decorators';
+import { BadRequestException, NotFoundException } from '@nestjs/common/exceptions';
+
+function imageFileFilter(
+    req: Express.Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, acceptFile: boolean) => void,
+  ) {
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+    const fileExtension = extname(file.originalname).toLowerCase();
+    if (allowedExtensions.includes(fileExtension)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten archivos de imagen'), false); // Rechazar el archivo
+    }
+  }
 
 @Controller('jugadores')
 export class JugadoresController {
@@ -91,5 +111,57 @@ export class JugadoresController {
   async tokens(@Param('id') id: number) {
       const tokens = await this.jugadoresService.tokens(id);
       return tokens;
+  }
+
+  @Post('subirImagen/:id')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './assets/qr',
+        filename: (req, file, cb) => {
+          const uniqueName = `${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(2, 15)}${extname(file.originalname)}`;
+          cb(null, uniqueName);
+        },
+      }),
+      fileFilter: imageFileFilter, // Aplicar filtro para tipos de archivo
+    }),
+  )
+  async uploadImage(
+    @Param('id') id: number,
+    @UploadedFile() file: Express.Multer.File,) {
+      if (!file) {
+        throw new BadRequestException('Solo se permiten archivos de imagen'); // Si el archivo es nulo, es porque fue rechazado por el filtro
+      }  
+      const jugador = await this.jugadoresService.findOne(id);
+      if (!jugador) {
+        throw new NotFoundException('Jugador no encontrado');
+      }
+      jugador.imagen = file.filename; // Asocia la imagen
+      return await this.jugadoresService.updateJugador(jugador); // Actualiza en el servicio
+  }
+
+  @Get('imagen/:id')
+  async obtenerImagen(@Param('id') id: number /*@Req() req: Request,*/ ) {
+    const jugador = await this.jugadoresService.findOne(id);
+    if (!jugador) {
+      throw new NotFoundException('Jugador no encontrado');
+    }
+    if (!jugador.imagen) {
+      throw new NotFoundException('Imagen no encontrada');
+    }
+    /*
+    const protocol = req.protocol; // Protocolo utilizado (HTTP o HTTPS)
+    const host = req.get('host'); // Nombre de dominio o dirección IP, junto con el puerto
+    const imageUrl = `${protocol}://${host}/assets/qr/${jugador.imagen}`; // URL completa
+    const imageUrl: `/assets/qr/${jugador.imagen}`
+    */
+    const imagePath = join(__dirname, '..', '..', 'assets/qr', jugador.imagen);
+    console.log(imagePath);
+    return {
+      imagePath, // Devuelve la URL completa
+    };
+
   }
 }

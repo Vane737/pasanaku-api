@@ -83,6 +83,9 @@ export class JugadoresService {
     return jugador;
   }
 
+  async updateJugador( jugador: Jugador ) {
+    return await this.jugadorRepository.save(jugador); 
+  }
 
   async update( id: number, updateJugadorDto: UpdateJugadorDto ): Promise<Jugador> {
     // Busca al jugador existente por su ID
