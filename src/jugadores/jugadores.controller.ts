@@ -6,7 +6,7 @@ import { LoginJugadorDto } from './dto/login-jugador.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
-//import { Request } from 'express';
+import { Request } from 'express';
 import { UploadedFile, UseInterceptors } from '@nestjs/common/decorators';
 import { BadRequestException, NotFoundException } from '@nestjs/common/exceptions';
 
@@ -146,7 +146,7 @@ export class JugadoresController {
 
 
   @Get('imagen/:id')
-  async obtenerImagen(@Param('id') id: number /*@Req() req: Request,*/ ) {
+  async obtenerImagen(@Param('id') id: number, @Req() req: Request ) {
     const jugador = await this.jugadoresService.findOne(id);
     if (!jugador) {
       throw new NotFoundException('Jugador no encontrado');
@@ -154,16 +154,16 @@ export class JugadoresController {
     if (!jugador.imagen) {
       throw new NotFoundException('Imagen no encontrada');
     }
-    /*
+    
     const protocol = req.protocol; // Protocolo utilizado (HTTP o HTTPS)
     const host = req.get('host'); // Nombre de dominio o dirección IP, junto con el puerto
     const imageUrl = `${protocol}://${host}/assets/qr/${jugador.imagen}`; // URL completa
-    const imageUrl: `/assets/qr/${jugador.imagen}`
-    */
-    const imagePath = join(__dirname, '..', '..', 'assets/qr', jugador.imagen);
+    //const imageUrl: `/assets/qr/${jugador.imagen}`
+    
+    //const imagePath = join(__dirname, '..', '..', 'assets/qr', jugador.imagen);
 
     return {
-      imagePath, // Devuelve la URL completa
+      imageUrl, // Devuelve la URL completa
     };
 
   }
