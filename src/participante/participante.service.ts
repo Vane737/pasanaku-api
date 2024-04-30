@@ -89,8 +89,8 @@ export class ParticipanteService {
                 this.transferenciaService.create(ganador,participante,subasta.ronda)
             }
 
-            this.participanteRepository.save(participante);
-            this.notificationService.sendPushNotificationIndividual(participante.jugador,title,body);
+            await this.participanteRepository.save(participante);
+            await this.notificationService.sendPushNotificationIndividual(participante.jugador,title,body);
         }    
         
 

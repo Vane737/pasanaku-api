@@ -3,12 +3,14 @@ import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { addMinutes } from 'date-fns/addMinutes';
 import { scheduleJob } from 'node-schedule';
-import { NotificationService } from 'src/notification/notification.service';
-import { Oferta } from 'src/oferta/entities/oferta.entity';
-import { ParticipanteService } from 'src/participante/participante.service';
-import { Ronda } from 'src/ronda/entities/ronda.entity';
 import { Repository } from 'typeorm';
+
+import { NotificationService } from 'src/notification/notification.service';
+import { ParticipanteService } from 'src/participante/participante.service';
+
 import { Subasta } from './entities/subasta.entity';
+import { Oferta } from 'src/oferta/entities/oferta.entity';
+import { Ronda } from 'src/ronda/entities/ronda.entity';
 
 @Injectable()
 export class SubastaService {
@@ -58,7 +60,7 @@ export class SubastaService {
         var title = "Subasta Inciada";
         const body = `Subasta de la ${subasta.ronda.partida.nombre} ${subasta.ronda.nombre} ha comenzado.`;
         console.log(body);
-        this.notificationService.sendPushNotification(subasta.ronda.partida.id,title,body);
+        await this.notificationService.sendPushNotification(subasta.ronda.partida.id,title,body);
 
     }
 

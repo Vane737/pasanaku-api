@@ -112,7 +112,7 @@ export class InvitacionService {
         //push
         if( invitado.jugador != null){
             var title = "Nueva invitacion";
-            var body = "As sido invitado a una nueva partida"
+            var body = "As sido invitado a una nueva partida";
             await this.notificationService.sendPushNotificationIndividual(invitado.jugador,title,body);
         }
            
