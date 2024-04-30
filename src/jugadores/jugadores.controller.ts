@@ -113,9 +113,11 @@ export class JugadoresController {
       return tokens;
   }
 
+
+  //Subir la imagen
   @Post('subirImagen/:id')
   @UseInterceptors(
-    FileInterceptor('image', {
+    FileInterceptor('imagen', {
       storage: diskStorage({
         destination: './assets/qr',
         filename: (req, file, cb) => {
@@ -141,6 +143,7 @@ export class JugadoresController {
       jugador.imagen = file.filename; // Asocia la imagen
       return await this.jugadoresService.updateJugador(jugador); // Actualiza en el servicio
   }
+
 
   @Get('imagen/:id')
   async obtenerImagen(@Param('id') id: number /*@Req() req: Request,*/ ) {
