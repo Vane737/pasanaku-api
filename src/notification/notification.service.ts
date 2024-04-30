@@ -98,7 +98,7 @@ export class NotificationService {
       }
 
 
-      async sendPushNotificationIndividual (jugador: Jugador, title: string, body : string): Promise<any> { 
+      async sendPushNotificationIndividual(jugador: Jugador, title: string, body : string): Promise<any> { 
         const message = {
           notification: {
             title: title,
@@ -119,33 +119,33 @@ export class NotificationService {
       
 
       //Recibe id de la partida
-      async sendPushNotification (id: number, title: string, body : string): Promise<any> {         
-        var jugadores: Jugador[] = await this.jugadoresService.jugadores(id);
-        var tokens: string[] = [];
-        for (const jugador of jugadores) {
-            if(jugador.tokenMovil != null){
-              tokens.push(jugador.tokenMovil);
-            }
-        }        
-        
-        const message = {
-          notification: {
-            title: title,
-            body: body,
-          },          
-          tokens: tokens,
-        };    
-        try {
-            const response = await admin.messaging().sendMulticast(message);
-            console.log('Successfully sent message:', response);
-          } catch (error) {
-            console.error('Error sending message:', error);
-        }
-        
-        //Guardaa notificaciones
-        for (const jugador of jugadores) {
-          await this.create(jugador,title,body);
-        }
+      async sendPushNotification(id: number, title: string, body : string): Promise<any> {         
+          var jugadores: Jugador[] = await this.jugadoresService.jugadores(id);
+          var tokens: string[] = [];
+          for (const jugador of jugadores) {
+              if(jugador.tokenMovil != null){
+                tokens.push(jugador.tokenMovil);
+              }
+          }        
+      
+          const message = {
+            notification: {
+              title: title,
+              body: body,
+            },          
+            tokens: tokens,
+          };    
+          try {
+              const response = await admin.messaging().sendMulticast(message);
+              console.log('Successfully sent message:', response);
+            } catch (error) {
+              console.error('Error sending message:', error);
+          }     
+             
+          //Guardaa notificaciones
+          for (const jugador of jugadores) {
+            await this.create(jugador,title,body);
+          }
 
       }
 
