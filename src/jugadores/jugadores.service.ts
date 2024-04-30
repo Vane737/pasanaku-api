@@ -3,6 +3,7 @@ import { CreateJugadorDto } from './dto/create-jugador.dto';
 import { UpdateJugadorDto } from './dto/update-jugador.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import { Request } from 'express';
 
 import { Jugador } from './entities/jugador.entity';
 import { CuentaService } from 'src/cuenta/cuenta.service';
@@ -204,4 +205,21 @@ export class JugadoresService {
 
     return jugadores;
   }
+
+  async obtenerImagen(id: number,req: Request) : Promise<string>{
+    const jugador = await this.findOne(id);
+    if (!jugador) {
+      throw new NotFoundException('Jugador no encontrado');
+    }
+    if (!jugador.imagen) {
+      return null;
+    }
+    const protocol = req.protocol; // Protocolo utilizado (HTTP o HTTPS)
+    const host = req.get('host'); // Nombre de dominio o dirección IP, junto con el puerto
+    const imageUrl = `${protocol}://${host}/assets/qr/${jugador.imagen}`; // URL completa
+    //const imageUrl: `/assets/qr/${jugador.imagen}`
+    //const imagePath = join(__dirname, '..', '..', 'assets/qr', jugador.imagen);
+    return imageUrl; // Devuelve la URL completa
+  }
+
 }

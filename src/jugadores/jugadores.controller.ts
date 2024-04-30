@@ -147,24 +147,6 @@ export class JugadoresController {
 
   @Get('imagen/:id')
   async obtenerImagen(@Param('id') id: number, @Req() req: Request ) {
-    const jugador = await this.jugadoresService.findOne(id);
-    if (!jugador) {
-      throw new NotFoundException('Jugador no encontrado');
-    }
-    if (!jugador.imagen) {
-      throw new NotFoundException('Imagen no encontrada');
-    }
-    
-    const protocol = req.protocol; // Protocolo utilizado (HTTP o HTTPS)
-    const host = req.get('host'); // Nombre de dominio o dirección IP, junto con el puerto
-    const imageUrl = `${protocol}://${host}/assets/qr/${jugador.imagen}`; // URL completa
-    //const imageUrl: `/assets/qr/${jugador.imagen}`
-    
-    //const imagePath = join(__dirname, '..', '..', 'assets/qr', jugador.imagen);
-
-    return {
-      imageUrl, // Devuelve la URL completa
-    };
-
+    return await this.jugadoresService.obtenerImagen(id,req);   
   }
 }
