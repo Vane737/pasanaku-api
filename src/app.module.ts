@@ -20,6 +20,7 @@ import { MailModule } from './mail/mail.module';
 import { RondaModule } from './ronda/ronda.module';
 import { SubastaModule } from './subasta/subasta.module';
 import { OfertaModule } from './oferta/oferta.module';
+import { TransferenciaModule } from './transferencia/transferencia.module';
 
 
 @Module({
@@ -29,6 +30,7 @@ import { OfertaModule } from './oferta/oferta.module';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'assets'),
+      serveRoot: '/assets', 
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -65,6 +67,7 @@ import { OfertaModule } from './oferta/oferta.module';
     RondaModule,
     SubastaModule,
     OfertaModule,
+    TransferenciaModule,
   ],
   controllers: [],
   providers: [
