@@ -48,6 +48,10 @@ export class OfertaService {
             throw new NotFoundException(`El participante no fue encontrada.`)
         }  
 
+        if( participante.recibido == true){
+            return "No se puede realizar pujas ya fuiste el ganador en una subasta";
+        }
+
         const ofertaRepetida = await this.ofertaRepository.findOne({
             where: {
                 subasta: { id: subastaId },

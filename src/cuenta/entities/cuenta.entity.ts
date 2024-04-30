@@ -1,7 +1,8 @@
+import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Banco } from "src/banco/entities/banco.entity";
 import { Jugador } from "src/jugadores/entities/jugador.entity";
 import { Participante } from "src/participante/entities/participante.entity";
-import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+
 
 @Entity()
 export class Cuenta {

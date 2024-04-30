@@ -8,6 +8,7 @@ import { JugadoresService } from 'src/jugadores/jugadores.service';
 import { Invitacion } from 'src/invitacion/entities/invitacion.entity';
 import { Partida } from 'src/partida/entities/partida.entity';
 import { Jugador } from 'src/jugadores/entities/jugador.entity';
+import { Notificacion } from './entities/notificacion.entity';
 
 import { SendWhatsAppDto } from './dto/sendWhatsAppDto.dto';
 import { join } from 'path';
@@ -17,7 +18,8 @@ export class NotificationService {
     private readonly client: Twilio;
     constructor(
         @InjectRepository( Invitacion ) private readonly invitacionRepository: Repository<Invitacion>, 
-        @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>, 
+        @InjectRepository( Jugador ) private readonly jugadorRepository: Repository<Jugador>,
+        @InjectRepository( Notificacion ) private readonly notificacionRepository: Repository<Notificacion>,  
         private readonly jugadoresService: JugadoresService,
     ) {       
       const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
@@ -72,14 +74,37 @@ export class NotificationService {
         }
       }
 
+      //Crea notificaciones
+      async create (jugador: Jugador, title: string, body : string): Promise<any>{
+          var fecha = new Date();
+          var fechaS = fecha.toLocaleString();
+          const notificacion = this.notificacionRepository.create({ 
+            title: title,
+            body: body,
+            fecha: fechaS,
+            jugador:jugador
+          }); 
+          await this.notificacionRepository.save(notificacion);
+      }
 
-      async sendPushNotificationInvitacion (token: string, title: string, body : string): Promise<any> { 
+      //Devuelve notificaciones de un jugador
+      async notificaciones(id: number) {
+        const notificaciones = await this.notificacionRepository.find({ 
+          where: {
+            jugador: { id: id },
+          },
+        });   
+        return notificaciones;
+      }
+
+
+      async sendPushNotificationIndividual (jugador: Jugador, title: string, body : string): Promise<any> { 
         const message = {
           notification: {
             title: title,
             body: body,
           },          
-          token: token,
+          token: jugador.tokenMovil,
         };    
         try {
           const response = await admin.messaging().send(message);
@@ -87,11 +112,21 @@ export class NotificationService {
         } catch (error) {
           console.error('Error sending message:', error);
         }
+        
+        await this.create(jugador,title,body);
       }
 
-      async sendPushNotification (id: number, title: string, body : string): Promise<any> { 
-        
-        var tokens: string[] = await this.jugadoresService.tokens(id);
+      
+
+      //Recibe id de la partida
+      async sendPushNotification (id: number, title: string, body : string): Promise<any> {         
+        var jugadores: Jugador[] = await this.jugadoresService.jugadores(id);
+        var tokens: string[] = [];
+        for (const jugador of jugadores) {
+            if(jugador.tokenMovil != null){
+              tokens.push(jugador.tokenMovil);
+            }
+        }        
         
         const message = {
           notification: {
@@ -101,12 +136,50 @@ export class NotificationService {
           tokens: tokens,
         };    
         try {
-          const response = await admin.messaging().sendMulticast(message);
-          console.log('Successfully sent message:', response);
-        } catch (error) {
-          console.error('Error sending message:', error);
+            const response = await admin.messaging().sendMulticast(message);
+            console.log('Successfully sent message:', response);
+          } catch (error) {
+            console.error('Error sending message:', error);
         }
+        
+        //Guardaa notificaciones
+        for (const jugador of jugadores) {
+          await this.create(jugador,title,body);
+        }
+
       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       /*
       //Prueba Twillio

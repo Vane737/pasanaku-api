@@ -1,6 +1,4 @@
-
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-
 import { Jugador } from "src/jugadores/entities/jugador.entity";
 import { Participante } from "src/participante/entities/participante.entity";
 

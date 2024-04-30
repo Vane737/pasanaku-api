@@ -1,8 +1,7 @@
-import { Moneda } from "src/moneda/entities/moneda.entity";
-import { Participante } from "src/participante/entities/participante.entity";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Partida } from "src/partida/entities/partida.entity";
 import { Subasta } from "src/subasta/entities/subasta.entity";
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Transferencia } from "src/transferencia/entities/transferencia.entity";
 
 
 @Entity()
@@ -23,7 +22,10 @@ export class Ronda {
     @ManyToOne(() => Partida, partida => partida.rondasEnpartida)
     partida: Partida;
     
-    @OneToOne(() => Subasta, subasta => subasta.ronda)
+    @OneToOne(() => Subasta, subasta => subasta.ronda, { cascade: ['remove'] })
     subasta: Subasta;
+
+    @OneToMany(() => Transferencia, transferencia => transferencia.ronda, { cascade: ['remove'], onDelete: 'CASCADE' })
+    transferencias: Transferencia[];
 
 }

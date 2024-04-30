@@ -73,9 +73,8 @@ export class RondaService {
       if ( !ronda ) {
           throw new NotFoundException(`La partida con el id ${ id } no fue encontrado.`)
       }  
-
       const partida = ronda.partida;
-      //console.log(partida);
+
       const rondaAnterior = await this.rondaRepository.findOne({
         where: { 
           partida: { 
@@ -85,7 +84,6 @@ export class RondaService {
         order: { fechaInicio: 'DESC' },
       });
 
-      //console.log(rondaAnterior);
       //Busco si hay partida anterior para finalizar
       if (rondaAnterior && rondaAnterior.estado !== 'Finalizada') {
         rondaAnterior.estado = 'Finalizada';

@@ -1,9 +1,6 @@
-import { Moneda } from "src/moneda/entities/moneda.entity";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Oferta } from "src/oferta/entities/oferta.entity";
-import { Participante } from "src/participante/entities/participante.entity";
-import { Partida } from "src/partida/entities/partida.entity";
 import { Ronda } from "src/ronda/entities/ronda.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -34,6 +31,6 @@ export class Subasta {
     @JoinColumn({ name: 'rondaId' })
     ronda: Ronda ;
 
-    @OneToMany(() => Oferta, oferta => oferta.subasta)
+    @OneToMany(() => Oferta, oferta => oferta.subasta, { cascade: ['remove'], onDelete: 'CASCADE' })
     ofertasDeSubasta: Oferta[];
 }

@@ -1,5 +1,5 @@
-import { Participante } from 'src/participante/entities/participante.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Participante } from 'src/participante/entities/participante.entity';
 
 @Entity()
 export class Role {

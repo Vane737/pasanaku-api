@@ -5,6 +5,7 @@ import { addMinutes } from 'date-fns/addMinutes';
 import { scheduleJob } from 'node-schedule';
 import { NotificationService } from 'src/notification/notification.service';
 import { Oferta } from 'src/oferta/entities/oferta.entity';
+import { ParticipanteService } from 'src/participante/participante.service';
 import { Ronda } from 'src/ronda/entities/ronda.entity';
 import { Repository } from 'typeorm';
 import { Subasta } from './entities/subasta.entity';
@@ -16,6 +17,7 @@ export class SubastaService {
         @InjectRepository( Subasta ) private readonly subastaRepository: Repository<Subasta>,
         @InjectRepository( Oferta ) private readonly ofertaRepository: Repository<Oferta>,
         private readonly notificationService: NotificationService,
+        private readonly participanteService: ParticipanteService
     ) {}
 
     async create(ronda: Ronda){
@@ -71,12 +73,16 @@ export class SubastaService {
         }
         
         subasta.estado = 'Finalizada';
-        let participanteId;
-        
+        const partida = subasta.ronda.partida;
+        let participantes = subasta.ronda.partida.participantesEnPartida;
+        var ganador;
+
         if (subasta.ofertasDeSubasta.length == 0) {
+            //No hay ofertas
             console.log("La subasta no tiene ofertas.");
-            const opciones = subasta.ronda.partida.participantesEnPartida;
+            const opciones = participantes;
             let elegido;
+
             for (const opcion of opciones) {
                 if (opcion.recibido == false) {
                     elegido = opcion;
@@ -86,8 +92,9 @@ export class SubastaService {
             subasta.jugadorId = elegido.jugador.id; 
             subasta.ganador = elegido.jugador.nombre; 
             subasta.resultado = 0;
-            participanteId = elegido.id;
+            ganador = elegido;
         } else {
+            //Hay ofertas
             console.log("La subasta tiene ofertas.");
             const ofertas = subasta.ofertasDeSubasta;
             let ofertaConMayorPuja = ofertas[0];
@@ -105,16 +112,15 @@ export class SubastaService {
             subasta.jugadorId = oferta.participante.jugador.id; 
             subasta.ganador = oferta.participante.jugador.nombre; 
             subasta.resultado = oferta.puja;
-            participanteId = oferta.participante.id;  
+            ganador = oferta.participante;
         }
-        
-        var title = "Subasta Finalizada";
-        const body = `El ganador es ${subasta.ganador} con ${subasta.resultado}.`;
-        console.log(body);
-        this.notificationService.sendPushNotification(subasta.ronda.partida.id,title,body);
-        console.log(subasta);
+
         await this.subastaRepository.save(subasta);       
         console.log("Subasta finalizada");
+
+        await this.participanteService.coutas(subasta,participantes,ganador,partida);
+        
+        
     }
 
     //Devuelve la subasta
