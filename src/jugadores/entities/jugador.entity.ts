@@ -1,7 +1,8 @@
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Cuenta } from "src/cuenta/entities/cuenta.entity";
 import { Invitacion } from "src/invitacion/entities/invitacion.entity";
+import { Notificacion } from "src/notification/entities/notificacion.entity";
 import { Participante } from "src/participante/entities/participante.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -52,4 +53,6 @@ export class Jugador {
     @OneToMany(() => Invitacion, invitacion => invitacion.jugador,{ cascade: true})
     invitacionesDeJugador: Invitacion[];    
 
+    @OneToMany(() => Notificacion, notificacion => notificacion.jugador,{ cascade: true})
+    notificacionesDeJugador: Invitacion[];    
 }

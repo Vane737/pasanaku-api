@@ -1,6 +1,6 @@
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Participante } from "src/participante/entities/participante.entity";
 import { Subasta } from "src/subasta/entities/subasta.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()

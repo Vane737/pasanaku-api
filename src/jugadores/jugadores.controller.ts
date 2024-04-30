@@ -109,7 +109,7 @@ export class JugadoresController {
   
   @Get('tokens/:id')
   async tokens(@Param('id') id: number) {
-      const tokens = await this.jugadoresService.tokens(id);
+      const tokens = await this.jugadoresService.jugadores(id);
       return tokens;
   }
 
@@ -158,7 +158,7 @@ export class JugadoresController {
     const imageUrl: `/assets/qr/${jugador.imagen}`
     */
     const imagePath = join(__dirname, '..', '..', 'assets/qr', jugador.imagen);
-    console.log(imagePath);
+
     return {
       imagePath, // Devuelve la URL completa
     };

@@ -32,7 +32,7 @@ export class PartidaService {
         if (!moneda) {
             throw new NotFoundException('La moneda especificada no existe');
         }
-        createPartidaDto.pozo = createPartidaDto.participantes * createPartidaDto.coutaInicial;
+        createPartidaDto.pozo = (createPartidaDto.participantes -1) * createPartidaDto.coutaInicial;
         
         const fechaInicioDate = new Date(createPartidaDto.fechaInicio);
         console.log(fechaInicioDate);
@@ -88,7 +88,7 @@ export class PartidaService {
         const ahora = new Date();
 
         partida.participantes = partida.participantesEnPartida.length;
-        partida.pozo = (partida.participantes * partida.coutaInicial);
+        partida.pozo = ((partida.participantes - 1 ) * partida.coutaInicial);
         partida.fechaInicio = ahora;
         partida.estado = 'Iniciada';
 
@@ -100,7 +100,7 @@ export class PartidaService {
         const body = `La partida ${partida.nombre} ha comenzado.\n La subasta empieza en 3 minutos`;
         this.notificationService.sendPushNotification(partida.id,title,body);
 
-        await this.rondaService.create(partida);
+        //await this.rondaService.create(partida);
 
         return await this.findOne(partida.id);
     }
