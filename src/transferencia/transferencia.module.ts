@@ -6,11 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Participante } from 'src/participante/entities/participante.entity';
 import { Ronda } from 'src/ronda/entities/ronda.entity';
 import { TransferenciaService } from './transferencia.service';
+import { JugadoresModule } from 'src/jugadores/jugadores.module';
 
 @Module({
   controllers: [TransferenciaController],
   providers: [TransferenciaService],
   imports: [
+    JugadoresModule,
     TypeOrmModule.forFeature([Transferencia,Participante,Ronda])
     
   ],
