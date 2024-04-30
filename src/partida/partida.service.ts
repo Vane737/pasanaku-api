@@ -96,7 +96,7 @@ export class PartidaService {
         
         var title = "Partida Inciada";
         const body = `La partida ${partida.nombre} ha comenzado.\n La subasta empieza en 3 minutos`;
-        this.notificationService.sendPushNotification(partida.id,title,body);
+        await this.notificationService.sendPushNotification(partida.id,title,body);
 
         await this.rondaService.create(partida);
 

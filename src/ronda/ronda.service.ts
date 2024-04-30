@@ -92,7 +92,7 @@ export class RondaService {
 
         var title = "Ronda Inciada";
         const body = `La ${ronda.nombre} ha comenzado.\n La subasta empieza en 3 minutos`;
-        this.notificationService.sendPushNotification(partida.id,title,body);
+        await this.notificationService.sendPushNotification(partida.id,title,body);
 
       }
     
