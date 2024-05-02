@@ -16,7 +16,12 @@ export class BancoController {
 
   @Get()
   findAll() {
-    return this.bancoService.findAll();
+    const assetsPath = join(__dirname, '..', '..','assets/qr');
+    console.log(assetsPath)
+    const files = readdirSync(assetsPath); 
+    console.log(files)
+    return assetsPath;
+    //return this.bancoService.findAll();
   }
 
   @Get(':id')
