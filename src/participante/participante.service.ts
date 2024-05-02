@@ -81,6 +81,7 @@ export class ParticipanteService {
                 participante.cuota = 0;
                 participante.estado = 'Ganador';
                 body = `Felicidades eres el ganador con ${subasta.resultado}`;
+                participante.recibido = true;
 
              }else{
                 participante.cuota = couta;

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
-import { addWeeks } from 'date-fns';
-import { addMonths } from 'date-fns/addMonths';
+import { addMinutes, addWeeks, addMonths  } from 'date-fns';
 import { scheduledJobs, scheduleJob } from 'node-schedule';
 import { fromZonedTime, toZonedTime   } from 'date-fns-tz';
 
@@ -35,7 +34,8 @@ export class RondaService {
               partida,
           });
           await this.rondaRepository.save(ronda);
-          fechaInicio = this.calcularFechaSiguiente(fechaInicio,lapso);          
+          fechaInicio = addMinutes(fechaInicio, 10);
+          //fechaInicio = this.calcularFechaSiguiente(fechaInicio,lapso);          
           await this.subastaService.create(ronda);
 
           if(index == 0){

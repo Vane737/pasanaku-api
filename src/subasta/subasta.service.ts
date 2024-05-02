@@ -24,7 +24,7 @@ export class SubastaService {
 
     async create(ronda: Ronda){
         var fechaInicio = addMinutes(ronda.fechaInicio, 2);
-        var fechaFinal = addMinutes(fechaInicio, 2);
+        var fechaFinal = addMinutes(fechaInicio, 3);
         const subasta = this.subastaRepository.create({
                 fechaInicio,
                 fechaFinal,

@@ -99,20 +99,21 @@ export class NotificationService {
 
 
       async sendPushNotificationIndividual(jugador: Jugador, title: string, body : string): Promise<any> { 
-        const message = {
-          notification: {
-            title: title,
-            body: body,
-          },          
-          token: jugador.tokenMovil,
-        };    
-        try {
-          const response = await admin.messaging().send(message);
-          console.log('Successfully sent message:', response);
-        } catch (error) {
-          console.error('Error sending message:', error);
+        if(jugador.tokenMovil != null){
+          const message = {
+            notification: {
+              title: title,
+              body: body,
+            },          
+            token: jugador.tokenMovil,
+          };    
+          try {
+            const response = await admin.messaging().send(message);
+            console.log('Successfully sent message:', response);
+          } catch (error) {
+            console.error('Error sending message:', error);
+          }
         }
-        
         await this.create(jugador,title,body);
       }
 

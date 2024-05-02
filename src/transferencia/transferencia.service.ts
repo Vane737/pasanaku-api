@@ -29,6 +29,7 @@ export class TransferenciaService {
         var fecha = addMinutes(fecha, 2);
         const transaccion = this.transferenciaRepository.create({ 
           monto: deudor.cuota,
+          contador: 0,
           fecha: fecha,
           estado: 'Debe',
           ronda: ronda,
@@ -42,6 +43,37 @@ export class TransferenciaService {
             this.penalizacion(transaccion.id);
         });
 
+    }
+
+    async penalizacion(id: number) {
+      console.log(id);
+      const transferencia = await this.transferenciaRepository.findOne({
+          where: { id: id },
+          relations: ['ronda.partida','deudor.jugador'],
+        });      
+        
+      if( transferencia.estado == 'Debe' && transferencia.contador < 2){
+        transferencia.monto = transferencia.monto * 1.10; 
+        transferencia.fecha = addMinutes(transferencia.fecha, 2);
+        transferencia.contador = transferencia.contador + 1; 
+        await this.transferenciaRepository.save(transferencia);
+
+        // Cancelar la tarea existente
+        const jobName = `Transferencia-${id}`;
+        try {
+          cancelJob(jobName);
+        } catch (error) {
+          console.error(`Error al cancelar el trabajo: ${error.message}`);
+        }
+        scheduleJob(jobName, transferencia.fecha, () => {
+          this.penalizacion(id);
+        });
+
+        var title = "Penalizacion Aplicada";
+        var body = `Tu nuevo monto a pagar de la partida ${transferencia.ronda.partida.nombre} ${transferencia.ronda.nombre} es ${transferencia.monto} .`;
+        await this.notificationService.sendPushNotificationIndividual(transferencia.deudor.jugador,title,body);
+      }  
+      
     }
 
     //Devuelve transferencias de un jugador
@@ -76,40 +108,20 @@ export class TransferenciaService {
     async pagar(id: number) {
       const transferencia = await this.transferenciaRepository.findOne({
           where: { id: id },
+          relations: ['ronda.partida','deudor.jugador','receptor.jugador'],
         });            
       transferencia.estado = 'Pagada';
-      await this.transferenciaRepository.save(transferencia);   
+      await this.transferenciaRepository.save(transferencia);  
+
+      var title = "Pago Recibido";
+      var body = `El jugador ${transferencia.deudor.jugador.nombre} te a realizado una transferencia .`;
+      await this.notificationService.sendPushNotificationIndividual(transferencia.receptor.jugador,title,body); 
+
+
       return 'Pagada';
     }
 
 
-    async penalizacion(id: number) {
-      const transferencia = await this.transferenciaRepository.findOne({
-          where: { id: id },
-          relations: ['ronda.partida','deudor.jugador'],
-        });      
-
-      if( transferencia.estado == 'Debe'){
-        transferencia.monto = transferencia.monto * 1.10; 
-        transferencia.fecha = addMinutes(transferencia.fecha, 2);
-        await this.transferenciaRepository.save(transferencia);
-
-        // Cancelar la tarea existente
-        const jobName = `Transferencia-${id}`;
-        try {
-          cancelJob(jobName);
-        } catch (error) {
-          console.error(`Error al cancelar el trabajo: ${error.message}`);
-        }
-        scheduleJob(jobName, transferencia.fecha, () => {
-          this.penalizacion(id);
-        });
-
-        var title = "Penalizacion Aplicada";
-        var body = `Tu nuevo monto a pagar de la partida ${transferencia.ronda.partida.nombre} ${transferencia.ronda.nombre} es ${transferencia.monto} .`;
-        await this.notificationService.sendPushNotificationIndividual(transferencia.deudor.jugador,title,body);
-      }  
-      
-    }
+    
 
 }

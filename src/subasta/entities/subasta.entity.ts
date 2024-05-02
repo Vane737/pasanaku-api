@@ -27,7 +27,7 @@ export class Subasta {
     @Column({ type: 'enum', enum: ['Espera', 'Iniciada', 'Finalizada'] })
     estado: 'Espera' | 'Iniciada' | 'Finalizada';
     
-    @OneToOne(() => Ronda, ronda => ronda.subasta)
+    @OneToOne(() => Ronda, ronda => ronda.subasta, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'rondaId' })
     ronda: Ronda ;
 

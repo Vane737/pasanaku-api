@@ -22,7 +22,7 @@ export class Ronda {
     @ManyToOne(() => Partida, partida => partida.rondasEnpartida)
     partida: Partida;
     
-    @OneToOne(() => Subasta, subasta => subasta.ronda, { cascade: ['remove'] })
+    @OneToOne(() => Subasta, subasta => subasta.ronda,  { cascade: ['remove'], onDelete: 'CASCADE' })
     subasta: Subasta;
 
     @OneToMany(() => Transferencia, transferencia => transferencia.ronda, { cascade: ['remove'], onDelete: 'CASCADE' })

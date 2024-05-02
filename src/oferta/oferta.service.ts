@@ -23,7 +23,7 @@ export class OfertaService {
     async create(createOfertaDto: CreateOfertaDto) {
         this.logger.log('Iniciando el método create()...');
         
-        const { subastaId, jugadorId, ...rest } = createOfertaDto;
+        const { subastaId, jugadorId, puja } = createOfertaDto;
         
         const subasta = await this.subastaRepository.findOne({
             relations: ['ronda','ronda.partida'],
@@ -37,6 +37,18 @@ export class OfertaService {
             return "No se puede ingresar pujas a esta subasta";
         }  
 
+        const pozo = subasta.ronda.partida.pozo;
+        const minPuja = pozo * 0.05; 
+        const maxPuja = pozo * 0.5;  
+
+        if (puja < minPuja) {
+            return `La puja debe ser al menos el 5% del pozo. Valor mínimo permitido: ${minPuja}.`;
+        }
+
+        if (puja > maxPuja) {
+            return `La puja no debe exceder el 50% del pozo. Valor máximo permitido: ${maxPuja}.`;
+        }
+        
         const participante = await this.participanteRepository.findOne({
             relations: ['jugador'],
             where: {
@@ -62,7 +74,7 @@ export class OfertaService {
         if ( !ofertaRepetida ) {
             const ahora = new Date();
             const oferta = this.ofertaRepository.create({
-                ...rest,
+                puja: puja,
                 fecha: ahora,
                 subasta: subasta,
                 participante: participante,
