@@ -12,13 +12,16 @@ export class Transferencia {
     @Column({ type: 'integer'})
     monto: number;
 
+    @Column({ type: 'integer'})
+    contador: number;
+
     @Column({ type: 'timestamp' })
     fecha: Date;
 
     @Column({ type: 'enum', enum: ['Debe', 'Pagada'] })
     estado: 'Debe' | 'Pagada';
 
-    @ManyToOne(() => Ronda, ronda => ronda.transferencias)
+    @ManyToOne(() => Ronda, ronda => ronda.transferencias, { onDelete: 'CASCADE' })
     ronda: Ronda;
 
     // Relación para el que paga

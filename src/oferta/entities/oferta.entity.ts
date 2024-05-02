@@ -15,7 +15,7 @@ export class Oferta {
     @Column({ type: 'timestamp' })
     fecha: Date;
     
-    @ManyToOne(() => Subasta, subasta => subasta.ofertasDeSubasta)
+    @ManyToOne(() => Subasta, subasta => subasta.ofertasDeSubasta, { onDelete: 'CASCADE' })
     subasta: Subasta;
 
     @ManyToOne(() => Participante, participante => participante.ofertasDeParticipante)
