@@ -81,6 +81,9 @@ export class ParticipanteService {
                 participante.cuota = 0;
                 participante.estado = 'Ganador';
                 body = `Felicidades eres el ganador con ${subasta.resultado}`;
+                if( participante.jugador.imagen == null){
+                    body = `Felicidades eres el ganador con ${subasta.resultado} no tienes qr por favor sube uno`;
+                }
                 participante.recibido = true;
 
              }else{
