@@ -12,8 +12,8 @@ export class Transferencia {
     @Column({ type: 'integer'})
     monto: number;
 
-    @Column({ type: 'integer'})
-    contador: number;
+    @Column({ type: 'integer', nullable: true})
+    contador: number | null;
 
     @Column({ type: 'timestamp' })
     fecha: Date;
