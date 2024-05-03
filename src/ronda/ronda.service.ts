@@ -41,8 +41,9 @@ export class RondaService {
           if(index == 0){
             var id = ronda.id;
           }else{
+            const fechaP = new Date(ronda.fechaInicio);
             const jobName = `ronda-${ronda.id}`
-            scheduleJob(jobName, ronda.fechaInicio, () => {
+            scheduleJob(jobName, fechaP, () => {
                 this.iniciarRonda(ronda.id);
             });
           }
@@ -91,7 +92,7 @@ export class RondaService {
         console.log(`Ronda anterior con ID ${rondaAnterior.id} ha sido finalizada.`);
 
         var title = "Ronda Inciada";
-        const body = `La ${ronda.nombre} ha comenzado.\n La subasta empieza en 3 minutos`;
+        const body = `La ${ronda.nombre} ha comenzado.\n La subasta empieza en 2 minutos`;
         await this.notificationService.sendPushNotification(partida.id,title,body);
 
       }
