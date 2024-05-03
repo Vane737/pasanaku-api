@@ -38,8 +38,9 @@ export class TransferenciaService {
         }); 
         await this.transferenciaRepository.save(transaccion);
 
+        const fechaP = new Date(transaccion.fecha);
         const jobName = `Transferencia-${transaccion.id}`
-          scheduleJob(jobName,fecha, () => {
+          scheduleJob(jobName,fechaP, () => {
             this.penalizacion(transaccion.id);
         });
 
