@@ -37,26 +37,23 @@ import { TransferenciaModule } from './transferencia/transferencia.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
-         //url: configService.get('DATABASE_URL'),
-         host: process.env.POSTGRES_HOST,
-         port: +process.env.POSTGRES_PORT,
-         database: process.env.POSTGRES_DATABASE,
-         username: process.env.POSTGRES_USERNAME,
-         password: process.env.POSTGRES_PASSWORD,
-         entities: ['dist/src/**/*.entity{.ts,.js}'],
-         autoLoadEntities: true, // Carga automaticamente las entidades
-         synchronize: true,  // Realiza las migraciones automaticamente
-         //ssl: false,
-         /*
-         ssl: true,
-         extra: {
-           ssl: {
-             rejectUnauthorized: false,
-           },
-         }
-         */
-       }),
+        url: configService.get('DATABASE_URL'),
+      // host: process.env.POSTGRES_HOST,
+      // port: +process.env.POSTGRES_PORT,
+      // database: process.env.POSTGRES_DATABASE,
+      // username: process.env.POSTGRES_USERNAME,
+      // password: process.env.POSTGRES_PASSWORD,
+        entities: ['dist/src/**/*.entity{.ts,.js}'],
+        autoLoadEntities: true, // Carga automaticamente las entidades
+        synchronize: true,  // Realiza las migraciones automaticamente
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        }
       }),
+     }),
     JugadoresModule,
     BancoModule,
     CuentaModule,
