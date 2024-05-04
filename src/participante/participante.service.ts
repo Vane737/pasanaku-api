@@ -11,6 +11,8 @@ import { Role } from 'src/roles/entities/role.entity';
 import { Participante } from './entities/participante.entity';
 import { CreateParticipanteDto } from './dto/create-participante.dto';
 import { Subasta } from 'src/subasta/entities/subasta.entity';
+import { addMinutes } from 'date-fns';
+import { scheduleJob } from 'node-schedule';
 
 @Injectable()
 export class ParticipanteService {
@@ -96,7 +98,13 @@ export class ParticipanteService {
             await this.notificationService.sendPushNotificationIndividual(participante.jugador,title,body);
         }    
         
-
+        var f = new Date();
+        f = addMinutes(f, 2);
+        const fecha = new Date(f);
+        const jobName = `Trans-${subasta.ronda.id}`
+          scheduleJob(jobName,fecha, () => {
+            this.transferenciaService.penalizacion(subasta.ronda.id);
+        });
 
     }
 }
