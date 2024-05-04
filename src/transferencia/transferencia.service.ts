@@ -38,9 +38,9 @@ export class TransferenciaService {
         }); 
         await this.transferenciaRepository.save(transaccion);
 
-        const fechaP = new Date(transaccion.fecha);
-        const jobName = `Transferencia-${transaccion.id}`
-          scheduleJob(jobName,fechaP, () => {
+        const fechaa = new Date(transaccion.fecha);
+        const jobName = `Trans-${transaccion.id}`
+          scheduleJob(jobName,fechaa, () => {
             this.penalizacion(transaccion.id);
         });
 
@@ -60,13 +60,14 @@ export class TransferenciaService {
         await this.transferenciaRepository.save(transferencia);
 
         // Cancelar la tarea existente
-        const jobName = `Transferencia-${id}`;
+        const jobName = `Trans-${id}`;
         try {
           cancelJob(jobName);
         } catch (error) {
           console.error(`Error al cancelar el trabajo: ${error.message}`);
         }
-        scheduleJob(jobName, transferencia.fecha, () => {
+        const fechaa = new Date(transferencia.fecha);
+        scheduleJob(jobName, fechaa, () => {
           this.penalizacion(id);
         });
 

@@ -41,9 +41,9 @@ export class RondaService {
           if(index == 0){
             var id = ronda.id;
           }else{
-            const fechaP = new Date(ronda.fechaInicio);
+            const fechaa = new Date(ronda.fechaInicio);
             const jobName = `ronda-${ronda.id}`
-            scheduleJob(jobName, fechaP, () => {
+            scheduleJob(jobName, fechaa, () => {
                 this.iniciarRonda(ronda.id);
             });
           }
