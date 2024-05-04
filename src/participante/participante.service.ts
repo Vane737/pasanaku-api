@@ -75,7 +75,6 @@ export class ParticipanteService {
         var title = "Subasta Finalizada";
         var body;
         
-
         for (const participante of participantes) {
             if(participante.jugador.id == subasta.jugadorId){
                 participante.cuota = 0;
