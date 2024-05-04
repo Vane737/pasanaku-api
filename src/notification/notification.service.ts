@@ -35,7 +35,7 @@ export class NotificationService {
       
       async sendWhatsAppMessage(nombre: string,invitacion: Invitacion,partida: Partida): Promise<any> {
         try {
-          const mediaUrl = ['https://i.ibb.co/Pr7hvBm/qr.png'];
+          const mediaUrl = ['https://i.ibb.co/cY3nmWx/qr.png'];
           const body = `Hola ${invitacion.nombre}.` + 
           `A sido invitado a la partida ${partida.nombre}, con un monto de ${partida.pozo}\n` + 
           `por el jugador ${nombre}\n\n` + 
@@ -89,11 +89,15 @@ export class NotificationService {
 
       //Devuelve notificaciones de un jugador
       async notificaciones(id: number) {
-        const notificaciones = await this.notificacionRepository.find({ 
+        const notificaciones = await this.notificacionRepository.find({
           where: {
             jugador: { id: id },
           },
-        });   
+          order: {
+            fecha: 'DESC', 
+          },
+        });
+      
         return notificaciones;
       }
 
