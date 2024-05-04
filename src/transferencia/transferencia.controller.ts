@@ -12,6 +12,11 @@ export class TransferenciaController {
     return this.transferenciaService.transferencias(id,req);
     }
 
+    @Put('penalizacion/:id')
+    penalizacion(@Param('id') id: number) {
+    return this.transferenciaService.penalizacion(id);
+    }
+
     @Put('pagar/:id')
     pagar(@Param('id') id: number) {
     return this.transferenciaService.pagar(id);

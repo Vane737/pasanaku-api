@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { Request } from 'express';
 import { addMinutes } from 'date-fns/addMinutes';
 import { cancelJob, scheduleJob,scheduledJobs,Job } from 'node-schedule';
@@ -11,6 +11,7 @@ import { Participante } from 'src/participante/entities/participante.entity';
 import { Transferencia } from './entities/transferencia.entity';
 import { Ronda } from 'src/ronda/entities/ronda.entity';
 import { NotificationService } from 'src/notification/notification.service';
+import { isBuffer } from 'util';
 
 @Injectable()
 export class TransferenciaService {
@@ -38,44 +39,51 @@ export class TransferenciaService {
         }); 
         await this.transferenciaRepository.save(transaccion);
 
-        const fechaa = new Date(transaccion.fecha);
-        const jobName = `Trans-${transaccion.id}`
-          scheduleJob(jobName,fechaa, () => {
-            this.penalizacion(transaccion.id);
-        });
-
     }
 
     async penalizacion(id: number) {
       console.log(id);
-      const transferencia = await this.transferenciaRepository.findOne({
-          where: { id: id },
-          relations: ['ronda.partida','deudor.jugador'],
-        });      
-        
-      if( transferencia.estado == 'Debe' && transferencia.contador < 2){
-        transferencia.monto = transferencia.monto * 1.10; 
-        transferencia.fecha = addMinutes(transferencia.fecha, 2);
-        transferencia.contador = transferencia.contador + 1; 
-        await this.transferenciaRepository.save(transferencia);
+      const transferencias = await this.transferenciaRepository.find({
+        where: {
+          ronda: { id: id },
+          estado: 'Debe',
+          contador: LessThan(2), 
+          },
+        relations: ['ronda.partida', 'deudor.jugador']
+        });  
+            
+      if( transferencias.length != 0){
+      for (const transferencia of transferencias) {    
+          var couta = (transferencia.monto * 1.10);        
+          couta = Math.ceil(couta);
+          transferencia.monto = couta; 
+          transferencia.fecha = addMinutes(transferencia.fecha, 2);
+          transferencia.contador = transferencia.contador + 1; 
+          await this.transferenciaRepository.save(transferencia);
 
-        // Cancelar la tarea existente
+          var title = "Penalizacion Aplicada";
+          var body = `Tu nuevo monto a pagar de la partida ${transferencia.ronda.partida.nombre} ${transferencia.ronda.nombre} es ${transferencia.monto} .`;
+          console.log(body);
+          await this.notificationService.sendPushNotificationIndividual(transferencia.deudor.jugador,title,body);
+        }  
+      }
+
+      if( transferencias.length != 0){
+        console.log(transferencias.length);
         const jobName = `Trans-${id}`;
         try {
           cancelJob(jobName);
         } catch (error) {
           console.error(`Error al cancelar el trabajo: ${error.message}`);
         }
-        const fechaa = new Date(transferencia.fecha);
-        scheduleJob(jobName, fechaa, () => {
+        var f = new Date();
+        f = addMinutes(f, 2);
+        const fecha = new Date(f);
+        scheduleJob(jobName, fecha, () => {
           this.penalizacion(id);
         });
-
-        var title = "Penalizacion Aplicada";
-        var body = `Tu nuevo monto a pagar de la partida ${transferencia.ronda.partida.nombre} ${transferencia.ronda.nombre} es ${transferencia.monto} .`;
-        await this.notificationService.sendPushNotificationIndividual(transferencia.deudor.jugador,title,body);
-      }  
-      
+      }
+      return 'hola';
     }
 
     //Devuelve transferencias de un jugador
