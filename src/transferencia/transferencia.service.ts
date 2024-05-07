@@ -92,6 +92,9 @@ export class TransferenciaService {
           where: {
             deudor: { jugador: { id: id } },
           },
+          order: {
+            fecha: 'DESC', 
+          },
           relations: ['ronda.partida','deudor.jugador','receptor.jugador'],
         });   
         const transferenciasSimples = await Promise.all(transferencias.map(async (transferencia) => ({          

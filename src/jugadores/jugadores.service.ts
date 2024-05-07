@@ -182,6 +182,7 @@ export class JugadoresService {
   //Devuelve las participaciones del jugador, en ellas esta la partida en la que participan
   async getParticipaciones(id: number) {
     const jugador = await this.jugadorRepository.findOneBy({ id });
+    jugador.participantesDeJugador.sort((a, b) => b.id - a.id);
     const participaciones = jugador.participantesDeJugador;
     return participaciones;
   }
