@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateOfertaDto } from './dto/create-oferta.dto';
 import { OfertaService } from './oferta.service';
 
@@ -10,6 +10,7 @@ export class OfertaController {
         ) {}
     
       @Post()
+      @UsePipes(new ValidationPipe({ transform: true }))
       async create(@Body() createOfertaDto: CreateOfertaDto) {
         const oferta = await this.ofertaService.create(createOfertaDto);        
         return {

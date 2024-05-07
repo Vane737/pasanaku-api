@@ -15,7 +15,20 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof BadRequestException) {
       status = HttpStatus.BAD_REQUEST;
-      message = exception.message;
+      const exceptionResponse = exception.getResponse();
+      console.log(exceptionResponse);
+      if (typeof exceptionResponse === 'string') {
+        message = exceptionResponse;
+      } else if (typeof exceptionResponse === 'object' && 'message' in exceptionResponse) {
+        if (Array.isArray(exceptionResponse.message)) {
+          message = exceptionResponse.message.join(', ');
+        } else {
+          message = String(exceptionResponse.message); 
+        }
+      }else {
+        message = exception.message; // Si no, obtener el mensaje por defecto
+      }
+      
     } else if (exception instanceof NotFoundException) {
       status = HttpStatus.NOT_FOUND;
       message = exception.message;

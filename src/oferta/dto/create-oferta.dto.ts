@@ -1,8 +1,9 @@
-import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min, MinLength } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min, MinLength } from 'class-validator';
 
 export class CreateOfertaDto {  
 
-    @IsInt()
+    @IsPositive({ message: 'La puja debe ser un número positivo.' })
+    @IsInt({ message: 'La puja debe ser un número entero.' })
     puja: number;
 
     @IsNumber()
