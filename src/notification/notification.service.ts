@@ -35,7 +35,7 @@ export class NotificationService {
       
       async sendWhatsAppMessage(nombre: string,invitacion: Invitacion,partida: Partida): Promise<any> {
         try {
-          const mediaUrl = ['https://i.ibb.co/cY3nmWx/qr.png'];
+          const mediaUrl = ['https://i.ibb.co/f0KjRyt/qr.png'];
           const body = `Hola ${invitacion.nombre}.` + 
           `A sido invitado a la partida ${partida.nombre}, con un monto de ${partida.pozo}\n` + 
           `por el jugador ${nombre}\n\n` + 
