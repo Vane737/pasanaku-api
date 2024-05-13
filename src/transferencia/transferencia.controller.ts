@@ -1,4 +1,4 @@
-import { Controller,Post,Get, Param, Req, Put } from '@nestjs/common';
+import { Controller,Post,Get, Param, Req, Put, Body } from '@nestjs/common';
 import { Request } from 'express';
 import { TransferenciaService } from './transferencia.service';
 
@@ -15,6 +15,11 @@ export class TransferenciaController {
     @Put('penalizacion/:id')
     penalizacion(@Param('id') id: number) {
     return this.transferenciaService.penalizacion(id);
+    }
+
+    @Post('jugadorEliminado')
+    jugadorEliminado(@Body() body: any) {
+    return this.transferenciaService.jugadorEliminado(body.creadorId,body.rondaId,body.nombre);
     }
 
     @Put('pagar/:id')

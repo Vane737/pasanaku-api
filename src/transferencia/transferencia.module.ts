@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { Transferencia } from './entities/transferencia.entity';
 import { TransferenciaController } from './transferencia.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { JugadoresModule } from 'src/jugadores/jugadores.module';
 import { NotificationModule } from 'src/notification/notification.module';
+import { ParticipanteModule } from 'src/participante/participante.module';
 
 import { Participante } from 'src/participante/entities/participante.entity';
 import { Ronda } from 'src/ronda/entities/ronda.entity';
@@ -17,6 +18,7 @@ import { TransferenciaService } from './transferencia.service';
   imports: [
     JugadoresModule,
     NotificationModule,
+    forwardRef(() => ParticipanteModule),
     TypeOrmModule.forFeature([Transferencia,Participante,Ronda])
     
   ],

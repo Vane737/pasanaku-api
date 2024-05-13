@@ -16,8 +16,8 @@ export class Participante {
     @Column({ type: 'int' })
     cuota: number;
 
-    @Column({ type: 'enum', enum: ['Pago', 'Debe', 'Ganador','Espera'] })
-    estado: 'Pago' | 'Debe' | 'Espera' | 'Ganador';
+    @Column({ type: 'enum', enum: ['Pago', 'Debe', 'Ganador','Espera','Eliminado'] })
+    estado: 'Pago' | 'Debe' | 'Espera' | 'Ganador' | 'Eliminado';
 
     @Column({ type: 'boolean'})
     recibido: boolean;

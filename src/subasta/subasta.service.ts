@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { addMinutes } from 'date-fns/addMinutes';
-import { scheduleJob } from 'node-schedule';
+import { cancelJob, scheduleJob } from 'node-schedule';
 import { Repository } from 'typeorm';
 
 import { NotificationService } from 'src/notification/notification.service';
 import { ParticipanteService } from 'src/participante/participante.service';
+import { PartidaService } from 'src/partida/partida.service';
 
 import { Subasta } from './entities/subasta.entity';
 import { Oferta } from 'src/oferta/entities/oferta.entity';
@@ -19,12 +20,13 @@ export class SubastaService {
         @InjectRepository( Subasta ) private readonly subastaRepository: Repository<Subasta>,
         @InjectRepository( Oferta ) private readonly ofertaRepository: Repository<Oferta>,
         private readonly notificationService: NotificationService,
-        private readonly participanteService: ParticipanteService
+        private readonly participanteService: ParticipanteService,
+        @Inject(forwardRef(() => PartidaService)) private readonly partidaService: PartidaService,
     ) {}
 
     async create(ronda: Ronda){
         var fechaInicio = addMinutes(ronda.fechaInicio, 2);
-        var fechaFinal = addMinutes(fechaInicio, 3);
+        var fechaFinal = addMinutes(fechaInicio, 2);
         const subasta = this.subastaRepository.create({
                 fechaInicio,
                 fechaFinal,
@@ -77,24 +79,35 @@ export class SubastaService {
         subasta.estado = 'Finalizada';
         const partida = subasta.ronda.partida;
         let participantes = subasta.ronda.partida.participantesEnPartida;
-        var ganador;
+        participantes = participantes.filter(participante => participante.estado != 'Eliminado');
+        var ganador = null;
 
         if (subasta.ofertasDeSubasta.length == 0) {
             //No hay ofertas
             console.log("La subasta no tiene ofertas.");
             const opciones = participantes;
-            let elegido;
-
             for (const opcion of opciones) {
                 if (opcion.recibido == false) {
-                    elegido = opcion;
+                    ganador = opcion;
                     break;
                 }
             }
-            subasta.jugadorId = elegido.jugador.id; 
-            subasta.ganador = elegido.jugador.nombre; 
+            if (ganador == null) {
+                const jobName = `partidaF-${partida.id}`;
+                try {
+                    cancelJob(jobName);
+                } catch (error) {
+                    console.error(`Error al cancelar el trabajo: ${error.message}`);
+                }
+                await this.partidaService.finalizarPartida(partida.id);
+                // Terminar el método aquí
+                return;
+            }
+            
+            subasta.jugadorId = ganador.jugador.id; 
+            subasta.ganador = ganador.jugador.nombre; 
             subasta.resultado = 0;
-            ganador = elegido;
+
         } else {
             //Hay ofertas
             console.log("La subasta tiene ofertas.");
@@ -119,10 +132,8 @@ export class SubastaService {
 
         await this.subastaRepository.save(subasta);       
         console.log("Subasta finalizada");
-
         await this.participanteService.coutas(subasta,participantes,ganador,partida);
-        
-        
+                
     }
 
     //Devuelve la subasta

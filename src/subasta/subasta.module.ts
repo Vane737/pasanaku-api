@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { SubastaController } from './subasta.controller';
 import { SubastaService } from './subasta.service';
 
@@ -9,6 +9,7 @@ import { Ronda } from 'src/ronda/entities/ronda.entity';
 import { Subasta } from './entities/subasta.entity';
 import { Oferta } from 'src/oferta/entities/oferta.entity';
 import { ParticipanteModule } from 'src/participante/participante.module';
+import { PartidaModule } from 'src/partida/partida.module';
 
 
 @Module({
@@ -17,6 +18,7 @@ import { ParticipanteModule } from 'src/participante/participante.module';
   imports: [
     NotificationModule,
     ParticipanteModule,
+    forwardRef(() => PartidaModule),
     TypeOrmModule.forFeature([Ronda,Subasta,Oferta])
     
   ],

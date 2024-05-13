@@ -49,6 +49,7 @@ export class RondaService {
           }
         }
         await this.iniciarRonda(id);
+        return fechaInicio;
     }
 
 
@@ -94,7 +95,6 @@ export class RondaService {
         var title = "Ronda Inciada";
         const body = `La ${ronda.nombre} ha comenzado.\n La subasta empieza en 2 minutos`;
         await this.notificationService.sendPushNotification(partida.id,title,body);
-
       }
     
       ronda.estado = 'Iniciada';
@@ -103,15 +103,12 @@ export class RondaService {
       if (ronda.subasta && ronda.subasta.fechaInicio) {
         var fechaInicioSubasta = new Date(ronda.subasta.fechaInicio);
         //fechaInicioSubasta =  fromZonedTime(fechaInicioSubasta, 'America/La_Paz')
-
         const jobName = `I subasta-${ronda.subasta.id}`
         scheduleJob(jobName, fechaInicioSubasta, () => {
           this.subastaService.iniciarSubasta(ronda.subasta.id);
         });
-  
         console.log('Subasta programada para iniciar el '+ fechaInicioSubasta);
       }
-
       console.log (Object.keys(scheduledJobs));
     }
 
