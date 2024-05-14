@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -25,7 +25,7 @@ export class ParticipanteService {
         @InjectRepository( Role ) private readonly roleRepository: Repository<Role>, 
         @InjectRepository( Participante ) private readonly participanteRepository: Repository<Participante>, 
         private readonly notificationService: NotificationService,
-        private readonly transferenciaService: TransferenciaService,
+        @Inject(forwardRef(() => TransferenciaService)) private readonly transferenciaService: TransferenciaService,
     ) { }
 
     async create(createParticipanteDto: CreateParticipanteDto): Promise<Participante> {

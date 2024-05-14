@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { addMinutes, addWeeks, addMonths  } from 'date-fns';
@@ -18,7 +18,7 @@ export class RondaService {
 
     constructor(
         @InjectRepository( Ronda ) private readonly rondaRepository: Repository<Ronda>,
-        private readonly subastaService: SubastaService,
+        @Inject(forwardRef(() => SubastaService)) private readonly subastaService: SubastaService,
         private readonly notificationService: NotificationService,
     ) {}
 

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { fromZonedTime, toZonedTime   } from 'date-fns-tz';
@@ -23,7 +23,7 @@ export class PartidaService {
         @InjectRepository( Partida ) private readonly partidaRepository: Repository<Partida>,     
         @InjectRepository( Moneda ) private readonly monedaRepository: Repository<Moneda>, 
         @InjectRepository( Ronda )  private readonly rondaRepository: Repository<Ronda>,
-        private readonly rondaService: RondaService,
+        @Inject(forwardRef(() => RondaService)) private readonly rondaService: RondaService,
         private readonly notificationService: NotificationService,
         ) { }
 
