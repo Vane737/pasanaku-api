@@ -10,6 +10,7 @@ import { Ronda } from './entities/ronda.entity';
 import { Partida } from 'src/partida/entities/partida.entity';
 import { Subasta } from 'src/subasta/entities/subasta.entity';
 import { Transferencia } from 'src/transferencia/entities/transferencia.entity';
+import { PartidaModule } from 'src/partida/partida.module';
 
 
 
@@ -17,8 +18,9 @@ import { Transferencia } from 'src/transferencia/entities/transferencia.entity';
   controllers: [RondaController],
   providers: [RondaService],
   imports: [
-    forwardRef(() => SubastaModule),
     NotificationModule,
+    SubastaModule,
+    forwardRef(() => PartidaModule),
     TypeOrmModule.forFeature([Partida,Ronda,Subasta,Transferencia])
     
   ],

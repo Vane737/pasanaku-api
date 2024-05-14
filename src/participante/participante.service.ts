@@ -93,11 +93,12 @@ export class ParticipanteService {
                     x = couta * x;
                     x = Math.ceil(x);
                     participante.cuota = x;
+                    body = `El ganador es ${subasta.ganador} con ${subasta.resultado}.Tu cuota es de ${x}`;
                 }else{
                     participante.cuota = couta;
+                    body = `El ganador es ${subasta.ganador} con ${subasta.resultado}.Tu cuota es de ${couta}`;
                 }                     
                 participante.estado = 'Debe';
-                body = `El ganador es ${subasta.ganador} con ${subasta.resultado}.Tu cuota es de ${couta}`;
                 this.transferenciaService.create(ganador,participante,subasta.ronda)
             }
 

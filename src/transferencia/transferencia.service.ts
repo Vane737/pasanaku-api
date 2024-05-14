@@ -83,7 +83,7 @@ export class TransferenciaService {
               }
               //El creador no es deudor ni receptor, se le aumenta su cuota
               else{
-                await this.jugadorEliminado(creador,transferencia.ronda.id,transferencia.deudor.jugador.nombre);
+                await this.jugadorEliminado(creador,transferencia);
               }              
               await this.participanteService.eliminar(deudor);
               await this.transferenciaRepository.remove( transferencia );
@@ -149,35 +149,33 @@ export class TransferenciaService {
       await this.transferenciaRepository.save(transferencia);  
 
       var title = "Pago Recibido";
-      var body = `El jugador ${transferencia.deudor.jugador.nombre} te a realizado una transferencia .`;
+      var body = `El jugador ${transferencia.deudor.jugador.nombre} te a realizado una transferencia de ${transferencia.monto}.`;
       await this.notificationService.sendPushNotificationIndividual(transferencia.receptor.jugador,title,body); 
       return 'Pagada';
     }
 
 
-    async jugadorEliminado(creadorId: number, rondaId: number, nombre: string) {
+    async jugadorEliminado(creadorId: number, transferenciaEliminado: Transferencia) {
       const transferencia = await this.transferenciaRepository.findOne({
         where: {
           deudor: { id: creadorId },
-          ronda: { id: rondaId },
+          ronda: { id: transferenciaEliminado.ronda.id },
           },
           relations: ['ronda.partida','deudor.jugador'],
         }); 
-
       if( transferencia != null){
         if(transferencia.estado == 'Pagada'){
           transferencia.estado = 'Debe';
         }else{
-          var couta = transferencia.monto * 2;
+          var couta = transferencia.monto + transferenciaEliminado.monto;    
           couta = Math.ceil(couta);
-          transferencia.monto = couta;
+          transferencia.monto = couta;      
         }
         await this.transferenciaRepository.save(transferencia);
         var title = "Jugador Eliminado";
-        var body = `El jugador ${nombre} a sido eliminado tienes que pagar su couta de ahora en adelante.`;
+        var body = `El jugador ${transferencia.ronda.partida.nombre} a sido eliminado tienes que pagar su couta de ahora en adelante.`;
         await this.notificationService.sendPushNotificationIndividual(transferencia.deudor.jugador,title,body); 
       }  
-
     }
     
 

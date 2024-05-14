@@ -18,7 +18,6 @@ import { PartidaModule } from 'src/partida/partida.module';
   imports: [
     NotificationModule,
     ParticipanteModule,
-    forwardRef(() => PartidaModule),
     TypeOrmModule.forFeature([Ronda,Subasta,Oferta])
     
   ],

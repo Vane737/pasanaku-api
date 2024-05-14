@@ -23,8 +23,8 @@ export class PartidaService {
         @InjectRepository( Partida ) private readonly partidaRepository: Repository<Partida>,     
         @InjectRepository( Moneda ) private readonly monedaRepository: Repository<Moneda>, 
         @InjectRepository( Ronda )  private readonly rondaRepository: Repository<Ronda>,
-        @Inject(forwardRef(() => RondaService)) private readonly rondaService: RondaService,
         private readonly notificationService: NotificationService,
+        @Inject(forwardRef(() => RondaService)) private readonly rondaService: RondaService,
         ) { }
 
 

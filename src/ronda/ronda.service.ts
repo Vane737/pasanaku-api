@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { addMinutes, addWeeks, addMonths  } from 'date-fns';
-import { scheduledJobs, scheduleJob } from 'node-schedule';
+import { cancelJob, scheduledJobs, scheduleJob } from 'node-schedule';
 import { fromZonedTime, toZonedTime   } from 'date-fns-tz';
 
 
@@ -11,6 +11,7 @@ import { Partida } from 'src/partida/entities/partida.entity';
 import { Ronda } from './entities/ronda.entity';
 import { SubastaService } from 'src/subasta/subasta.service';
 import { NotificationService } from 'src/notification/notification.service';
+import { PartidaService } from 'src/partida/partida.service';
 
 
 @Injectable()
@@ -18,8 +19,9 @@ export class RondaService {
 
     constructor(
         @InjectRepository( Ronda ) private readonly rondaRepository: Repository<Ronda>,
-        @Inject(forwardRef(() => SubastaService)) private readonly subastaService: SubastaService,
+        private readonly subastaService: SubastaService,
         private readonly notificationService: NotificationService,
+        @Inject(forwardRef(() => PartidaService)) private readonly partidaService: PartidaService,
     ) {}
 
     async create(partida: Partida){
@@ -65,11 +67,12 @@ export class RondaService {
             throw new Error(`Lapso desconocido: ${lapso}`);
         }
     }
-
+    
+///////////////////////////////////////////////////////////////////////////////////////////////
 
     async iniciarRonda(id: number) {
       const ronda = await this.rondaRepository.findOne({
-          relations: ['subasta','partida'],
+          relations: ['subasta','partida.participantesEnPartida'],
           where: { id: id },
       }); 
       if ( !ronda ) {
@@ -100,6 +103,28 @@ export class RondaService {
       ronda.estado = 'Iniciada';
       await this.rondaRepository.save(ronda);
 
+      
+      let participantes = ronda.partida.participantesEnPartida;
+      participantes = participantes.filter(participante => participante.estado != 'Eliminado');
+      var ganador = null;
+      for (const participante of participantes) {
+        if (participante.recibido == false) {
+            ganador = participante;
+            break;
+        }
+      }
+      if (ganador == null) {
+          const jobName = `partidaF-${partida.id}`;
+          try {
+              cancelJob(jobName);
+          } catch (error) {
+              console.error(`Error al cancelar el trabajo: ${error.message}`);
+          }
+          await this.partidaService.finalizarPartida(partida.id);
+          // Terminar el método aquí
+          return;
+      }
+
       if (ronda.subasta && ronda.subasta.fechaInicio) {
         var fechaInicioSubasta = new Date(ronda.subasta.fechaInicio);
         //fechaInicioSubasta =  fromZonedTime(fechaInicioSubasta, 'America/La_Paz')
@@ -111,6 +136,8 @@ export class RondaService {
       }
       console.log (Object.keys(scheduledJobs));
     }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 
     //Devuelve la ronda
     async findOne(id: number) {

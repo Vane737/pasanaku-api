@@ -94,7 +94,7 @@ export class NotificationService {
             jugador: { id: id },
           },
           order: {
-            fecha: 'DESC', 
+            id: 'DESC', 
           },
         });
       
