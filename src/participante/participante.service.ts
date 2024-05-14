@@ -76,19 +76,26 @@ export class ParticipanteService {
         couta = Math.ceil(couta);
         var title = "Subasta Finalizada";
         var body;
+        var creador = await this.creador(partida.id);
         
         for (const participante of participantes) {
-            if(participante.jugador.id == subasta.jugadorId){
+            if(participante.id == ganador.id){
                 participante.cuota = 0;
                 participante.estado = 'Ganador';
                 body = `Felicidades eres el ganador con ${subasta.resultado}`;
                 if( participante.jugador.imagen == null){
                     body = `Felicidades eres el ganador con ${subasta.resultado} no tienes qr por favor sube uno`;
                 }
-                participante.recibido = true;
-
-             }else{
-                participante.cuota = couta;
+                participante.recibido = true; 
+            }else{
+                if(participante.id == creador && creador != ganador.id){                    
+                    var x = (partida.participantes - participantes.length) + 1;
+                    x = couta * x;
+                    x = Math.ceil(x);
+                    participante.cuota = x;
+                }else{
+                    participante.cuota = couta;
+                }                     
                 participante.estado = 'Debe';
                 body = `El ganador es ${subasta.ganador} con ${subasta.resultado}.Tu cuota es de ${couta}`;
                 this.transferenciaService.create(ganador,participante,subasta.ronda)
@@ -107,4 +114,31 @@ export class ParticipanteService {
         });
 
     }
+
+    async creador(id: number) {
+        const participante = await this.participanteRepository.findOne({
+            where: {
+                partida: { id: id },
+                rol:{nombre:'Administrador'},
+              },
+          });            
+
+        return participante.id;
+    }
+
+    async eliminar(id: number) {
+        const participante = await this.participanteRepository.findOne({
+            where: { id: id },
+            relations: ['jugador'],
+          });
+        participante.estado = 'Eliminado';
+        await this.participanteRepository.save(participante);
+
+        var title = "Eliminado";
+        var body = `As sido eliminado de la partida ${participante.partida.nombre} por incumplimiento de pago`;
+        await this.notificationService.sendPushNotificationIndividual(participante.jugador,title,body);
+    }
+
+
+
 }

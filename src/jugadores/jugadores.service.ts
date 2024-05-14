@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { CreateJugadorDto } from './dto/create-jugador.dto';
 import { UpdateJugadorDto } from './dto/update-jugador.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { Request } from 'express';
 
 import { Jugador } from './entities/jugador.entity';
@@ -183,7 +183,8 @@ export class JugadoresService {
   async getParticipaciones(id: number) {
     const jugador = await this.jugadorRepository.findOneBy({ id });
     jugador.participantesDeJugador.sort((a, b) => b.id - a.id);
-    const participaciones = jugador.participantesDeJugador;
+    var participaciones = jugador.participantesDeJugador;
+    participaciones = participaciones.filter(participante => participante.estado != 'Eliminado');
     return participaciones;
   }
 
@@ -199,7 +200,11 @@ export class JugadoresService {
   async jugadores(id: number) {
     const jugadores = await this.jugadorRepository.find({ 
       where: {
-        participantesDeJugador: { partida: { id: id } },
+        participantesDeJugador: { 
+          partida: { id: id },
+          estado: Not('Eliminado'), 
+        },
+        
       },
       select: ['id','tokenMovil'],
     });

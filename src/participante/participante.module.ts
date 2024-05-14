@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ParticipanteService } from './participante.service';
 import { ParticipanteController } from './participante.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,7 +20,7 @@ import { Transferencia } from 'src/transferencia/entities/transferencia.entity';
   controllers: [ParticipanteController],
   imports: [
     NotificationModule,
-    TransferenciaModule,
+    forwardRef(() => TransferenciaModule),
     TypeOrmModule.forFeature([Participante, Partida, Jugador, Cuenta, Role, Subasta,Transferencia]), // Importa las entidades Moneda y Partida
   ],
   exports: [ParticipanteService],

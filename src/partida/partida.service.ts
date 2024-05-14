@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { fromZonedTime, toZonedTime   } from 'date-fns-tz';
+import { scheduleJob } from 'node-schedule';
+
 import { NotificationService } from 'src/notification/notification.service';
 import { RondaService } from 'src/ronda/ronda.service';
 
@@ -8,7 +11,8 @@ import { Moneda } from 'src/moneda/entities/moneda.entity';
 import { Partida } from './entities/partida.entity';
 
 import { CreatePartidaDto } from './dto/create-partida.dto';
-import { fromZonedTime, toZonedTime   } from 'date-fns-tz';
+import { Ronda } from 'src/ronda/entities/ronda.entity';
+
 
 @Injectable()
 export class PartidaService {
@@ -16,12 +20,9 @@ export class PartidaService {
     private readonly logger = new Logger('PartidaService') 
 
     constructor( 
-        @InjectRepository( Partida ) 
-        private readonly partidaRepository: Repository<Partida>, 
-        
-        @InjectRepository( Moneda ) 
-        private readonly monedaRepository: Repository<Moneda>, 
-
+        @InjectRepository( Partida ) private readonly partidaRepository: Repository<Partida>,     
+        @InjectRepository( Moneda ) private readonly monedaRepository: Repository<Moneda>, 
+        @InjectRepository( Ronda )  private readonly rondaRepository: Repository<Ronda>,
         private readonly rondaService: RondaService,
         private readonly notificationService: NotificationService,
         ) { }
@@ -95,10 +96,18 @@ export class PartidaService {
         await this.partidaRepository.save(partida);
         
         var title = "Partida Inciada";
-        const body = `La partida ${partida.nombre} ha comenzado.\n La subasta empieza en 3 minutos`;
+        const body = `La partida ${partida.nombre} ha comenzado.\n La subasta empieza en 2 minutos`;
         await this.notificationService.sendPushNotification(partida.id,title,body);
 
-        await this.rondaService.create(partida);
+        const fecha = await this.rondaService.create(partida);
+        const fechaFinal = new Date(fecha);
+        partida.fechaInicio = fechaFinal;
+        await this.partidaRepository.save(partida);
+
+        const jobName = `partidaF-${partida.id}`
+            scheduleJob(jobName, fechaFinal, () => {
+                this.finalizarPartida(partida.id);
+            });
 
         return await this.findOne(partida.id);
     }
@@ -107,5 +116,24 @@ export class PartidaService {
         const ahora = new Date();
         console.log('hola ' + ahora);
         return ahora;
+    }
+
+    async finalizarPartida(id: number) {
+        const partida = await this.partidaRepository.findOne({
+            where: { id: id },
+            relations: ['rondasEnpartida'],
+        }); 
+        let rondas = partida.rondasEnpartida;
+        for (const ronda of rondas) {
+            if (ronda.estado != 'Finalizada') {
+                ronda.estado = 'Finalizada';
+                await this.rondaRepository.save(ronda);
+            }
+        }
+        partida.estado = 'Finalizada';
+        await this.partidaRepository.save(partida);
+        var title = "Partida Finalizada";
+        const body = `La partida ${partida.nombre} ha finalizado gracias por jugar.`;
+        await this.notificationService.sendPushNotification(partida.id,title,body);
     }
 }
