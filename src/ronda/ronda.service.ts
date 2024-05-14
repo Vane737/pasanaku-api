@@ -78,6 +78,10 @@ export class RondaService {
       if ( !ronda ) {
           throw new NotFoundException(`La partida con el id ${ id } no fue encontrado.`)
       }  
+
+      if ( ronda.estado == 'Finalizada' ) {
+        return ;
+      } 
       const partida = ronda.partida;
 
 

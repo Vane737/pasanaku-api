@@ -115,7 +115,7 @@ export class TransferenciaService {
             deudor: { jugador: { id: id } },
           },
           order: {
-            fecha: 'DESC', 
+            id: 'DESC', 
           },
           relations: ['ronda.partida','deudor.jugador','receptor.jugador'],
         });   
