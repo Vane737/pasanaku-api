@@ -17,11 +17,6 @@ export class TransferenciaController {
     return this.transferenciaService.penalizacion(id);
     }
 
-    @Post('jugadorEliminado')
-    jugadorEliminado(@Body() body: any) {
-    return this.transferenciaService.jugadorEliminado(body.creadorId,body.rondaId,body.nombre);
-    }
-
     @Put('pagar/:id')
     pagar(@Param('id') id: number) {
     return this.transferenciaService.pagar(id);

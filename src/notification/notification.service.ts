@@ -132,20 +132,23 @@ export class NotificationService {
                 tokens.push(jugador.tokenMovil);
               }
           }        
-      
-          const message = {
-            notification: {
-              title: title,
-              body: body,
-            },          
-            tokens: tokens,
-          };    
-          try {
-              const response = await admin.messaging().sendMulticast(message);
-              console.log('Successfully sent message:', response);
-            } catch (error) {
-              console.error('Error sending message:', error);
-          }     
+          if(tokens.length != 0){
+            console.log("hi");
+            const message = {
+              notification: {
+                title: title,
+                body: body,
+              },          
+              tokens: tokens,
+            };    
+            try {
+                const response = await admin.messaging().sendMulticast(message);
+                console.log('Successfully sent message:', response);
+              } catch (error) {
+                console.error('Error sending message:', error);
+            } 
+          }
+              
              
           //Guardaa notificaciones
           for (const jugador of jugadores) {

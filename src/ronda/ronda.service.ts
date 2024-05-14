@@ -80,30 +80,7 @@ export class RondaService {
       }  
       const partida = ronda.partida;
 
-      const rondaAnterior = await this.rondaRepository.findOne({
-        where: { 
-          partida: { 
-            id: partida.id 
-          }, 
-          fechaInicio: LessThan(ronda.fechaInicio) },
-        order: { fechaInicio: 'DESC' },
-      });
 
-      //Busco si hay partida anterior para finalizar
-      if (rondaAnterior && rondaAnterior.estado !== 'Finalizada') {
-        rondaAnterior.estado = 'Finalizada';
-        await this.rondaRepository.save(rondaAnterior);
-        console.log(`Ronda anterior con ID ${rondaAnterior.id} ha sido finalizada.`);
-
-        var title = "Ronda Inciada";
-        const body = `La ${ronda.nombre} ha comenzado.\n La subasta empieza en 2 minutos`;
-        await this.notificationService.sendPushNotification(partida.id,title,body);
-      }
-    
-      ronda.estado = 'Iniciada';
-      await this.rondaRepository.save(ronda);
-
-      
       let participantes = ronda.partida.participantesEnPartida;
       participantes = participantes.filter(participante => participante.estado != 'Eliminado');
       var ganador = null;
@@ -124,6 +101,30 @@ export class RondaService {
           // Terminar el método aquí
           return;
       }
+      
+      const rondaAnterior = await this.rondaRepository.findOne({
+        where: { 
+          partida: { 
+            id: partida.id 
+          }, 
+          fechaInicio: LessThan(ronda.fechaInicio) },
+        order: { fechaInicio: 'DESC' },
+      });
+
+      
+      //Busco si hay partida anterior para finalizar
+      if (rondaAnterior && rondaAnterior.estado !== 'Finalizada') {
+        rondaAnterior.estado = 'Finalizada';
+        await this.rondaRepository.save(rondaAnterior);
+        console.log(`Ronda anterior con ID ${rondaAnterior.id} ha sido finalizada.`);
+
+        var title = "Ronda Inciada";
+        const body = `La ${ronda.nombre} ha comenzado.\n La subasta empieza en 2 minutos`;
+        await this.notificationService.sendPushNotification(partida.id,title,body);
+      }
+    
+      ronda.estado = 'Iniciada';
+      await this.rondaRepository.save(ronda);      
 
       if (ronda.subasta && ronda.subasta.fechaInicio) {
         var fechaInicioSubasta = new Date(ronda.subasta.fechaInicio);
