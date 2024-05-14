@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PartidaController } from './partida.controller';
 import { PartidaService } from './partida.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,7 +20,7 @@ import { Ronda } from 'src/ronda/entities/ronda.entity';
   imports: [
     ParticipanteModule,
     InvitacionModule,
-    RondaModule,
+    forwardRef(() => RondaModule),
     NotificationModule,
     TypeOrmModule.forFeature([Partida,Moneda,Participante,Ronda])
     

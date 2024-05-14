@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { RondaController } from './ronda.controller';
 import { RondaService } from './ronda.service';
 
@@ -17,7 +17,7 @@ import { Transferencia } from 'src/transferencia/entities/transferencia.entity';
   controllers: [RondaController],
   providers: [RondaService],
   imports: [
-    SubastaModule,
+    forwardRef(() => SubastaModule),
     NotificationModule,
     TypeOrmModule.forFeature([Partida,Ronda,Subasta,Transferencia])
     
