@@ -21,7 +21,6 @@ export class SubastaService {
         @InjectRepository( Oferta ) private readonly ofertaRepository: Repository<Oferta>,
         private readonly notificationService: NotificationService,
         private readonly participanteService: ParticipanteService,
-        @Inject(forwardRef(() => PartidaService)) private readonly partidaService: PartidaService,
     ) {}
 
     async create(ronda: Ronda){
@@ -91,17 +90,6 @@ export class SubastaService {
                     ganador = opcion;
                     break;
                 }
-            }
-            if (ganador == null) {
-                const jobName = `partidaF-${partida.id}`;
-                try {
-                    cancelJob(jobName);
-                } catch (error) {
-                    console.error(`Error al cancelar el trabajo: ${error.message}`);
-                }
-                await this.partidaService.finalizarPartida(partida.id);
-                // Terminar el método aquí
-                return;
             }
             
             subasta.jugadorId = ganador.jugador.id; 

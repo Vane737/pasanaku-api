@@ -20,8 +20,8 @@ import { Ronda } from 'src/ronda/entities/ronda.entity';
   imports: [
     ParticipanteModule,
     InvitacionModule,
-    forwardRef(() => RondaModule),
     NotificationModule,
+    forwardRef(() => RondaModule),
     TypeOrmModule.forFeature([Partida,Moneda,Participante,Ronda])
     
   ],
